@@ -8,7 +8,7 @@ As a user running the application:
 
 3.[DONE] I want to filter user records by the Vroot title attribute; i.e. only user records matching the defined Vroot should be displayed.
 
-4. I want to search for records by name
+4.[DONE] I want to search for records by name
 
 5. I want to select multiple user records and save the selection as a named collection.
 

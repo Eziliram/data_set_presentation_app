@@ -1,6 +1,14 @@
 <template>
     <div id="app">
-        <div>
+        <div id="search_container">
+            <label>
+                <input id="txt_search" type="text"/>
+            </label>
+
+            <button id="btn_search" @click="search()">Search</button>
+        </div>
+
+        <div id="filter_container">
             <label for="filter_by">Filter by attribute</label>
 
             <select id="filter_by">
@@ -10,12 +18,12 @@
                 </template>
             </select>
 
-            <button @click="applyFilter()">Apply Filter</button>
-            <button @click="removeFilter()">Remove Filters</button>
+            <button id="btn_apply_filter" @click="applyFilter()">Apply Filter</button>
+            <button id="btn_remove_filter" @click="reset()">Reset</button>
         </div>
         
         <div id="data_container">
-            <div class="header data-row">
+            <div class="table-header data-row">
                 <div>
                     <label>
                         <input id="select_all" type="checkbox"/>
@@ -71,8 +79,8 @@
 
         data: () => {
             return {
-                filter: false,
-                filteredUsers: [],
+                isResult: false,
+                results: [],
 
                 selectedUserIndex: null,
 
@@ -88,9 +96,9 @@
         computed: {
             displayedRecords() {
 
-                if (!this.filter) return this.users.slice(this.currentPage, this.currentPage + this.numberOfRecordsPerPage);
-                this.filter = false;
-                return this.filteredUsers;
+                if (!this.isResult) return this.users.slice(this.currentPage, this.currentPage + this.numberOfRecordsPerPage);
+                this.isResult = false;
+                return this.results;
             },
 
         },
@@ -133,10 +141,6 @@
                         }
                     });
                 });
-
-                //todo: remove
-                // console.log(this.attributes)
-                // console.log(this.users)
             },
             /**
              *
@@ -214,22 +218,41 @@
             mapAttributeId(id) {
                 return this.attributes.find(attribute => { if (attribute.id === id) return attribute.title }).title;
             },
+            /**
+             *
+             */
+            search() {
+
+                const searchValue = document.getElementById('txt_search').value;
+                let searchResults = this.users.filter(user => { return user.name.match(searchValue) });
+
+                this.results = []; // Clear results
+                this.isResult = true;
+                searchResults.forEach(result => this.results.push(result));
+            },
+            /**
+             *
+             */
             applyFilter() {
 
                 const selectedFilterOption = document.getElementById('filter_by').value;
-                let filteredUsers = [];
+                let filteredResults = [];
 
-                this.filter = true;
+                this.results = []; // Clear results
+                this.isResult = true;
                 this.users.forEach(user => {
-                    let result = user.attributeIds.filter((attr) => { return attr === selectedFilterOption });
-                    if (result.length !== 0) filteredUsers.push(user);
+                    let result = user.attributeIds.filter(attr => { return attr === selectedFilterOption });
+                    if (result.length !== 0) filteredResults.push(user);
                 });
 
-                filteredUsers.forEach(user => this.filteredUsers.push(user));
+                filteredResults.forEach(result => this.results.push(result));
             },
-            removeFilter() {
-                this.filter = false;
-                this.filteredUsers = [];
+            /**
+             *
+             */
+            reset() {
+                this.isResult = false;
+                this.results = [];
                 document.getElementById('filter_by').value = '';
             },
             //</editor-fold>
@@ -255,7 +278,7 @@
                 color #8D9AA8
                 font-style italic
 
-    .header
+    .table-header
         font-weight 600
         border-bottom 1px solid #2C3E50
 
@@ -269,4 +292,6 @@
                 width 100px
             &:nth-child(3)
                 width 100px
+            &:nth-child(4)
+                max-width 1200px
 </style>
