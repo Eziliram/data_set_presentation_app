@@ -6,12 +6,13 @@
             </label>
 
             <button id="btn_search" @click="search()">Search</button>
+            <button id="btn_clear" @click="clear()">Clear</button>
         </div>
 
         <div id="filter_container">
-            <label for="filter_by">Filter by attribute</label>
+            <label for="drp_filter">Filter by attribute</label>
 
-            <select id="filter_by">
+            <select id="drp_filter">
                 <option value="">Please select</option>
                 <template v-for="attribute in attributes">
                     <option :value="attribute.id">{{ attribute.title }}</option>
@@ -94,13 +95,11 @@
         },
 
         computed: {
+            // The records that are currently displayed on the screen
             displayedRecords() {
-
-                if (!this.isResult) return this.users.slice(this.currentPage, this.currentPage + this.numberOfRecordsPerPage);
-                this.isResult = false;
-                return this.results;
-            },
-
+                let records = this.isResult ? this.results : this.users;
+                return records.slice(this.currentPage, this.currentPage + this.numberOfRecordsPerPage);
+            }
         },
 
         methods: {
@@ -222,20 +221,28 @@
              *
              */
             search() {
-
+                //TODO: implement 'loading'
                 const searchValue = document.getElementById('txt_search').value;
-                let searchResults = this.users.filter(user => { return user.name.match(searchValue) });
+                let searchResults = this.users.filter(user => {
+                    if (user.name.match(searchValue) !== null) return user.name.match(searchValue);
+                    let attributeResults = user.attributeIds.filter(id => { return this.mapAttributeId(id).toLowerCase().match(searchValue.toLowerCase()) });
+                    if (attributeResults.length !== 0) return user;
+                });
 
                 this.results = []; // Clear results
                 this.isResult = true;
                 searchResults.forEach(result => this.results.push(result));
+            },
+            clear() {
+                this.clearResults();
+                document.getElementById('txt_search').value = '';
             },
             /**
              *
              */
             applyFilter() {
 
-                const selectedFilterOption = document.getElementById('filter_by').value;
+                const selectedFilterOption = document.getElementById('drp_filter').value;
                 let filteredResults = [];
 
                 this.results = []; // Clear results
@@ -251,9 +258,12 @@
              *
              */
             reset() {
-                this.isResult = false;
+                this.clearResults();
+                document.getElementById('drp_filter').value = '';
+            },
+            clearResults() {
                 this.results = [];
-                document.getElementById('filter_by').value = '';
+                this.isResult = false;
             },
             //</editor-fold>
 
@@ -272,7 +282,7 @@
         color #2C3E50
         margin-top 60px
 
-    #filter_by
+    #drp_filter
         option
             &:first-child
                 color #8D9AA8
