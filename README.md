@@ -1,11 +1,10 @@
 # data_set_presentation_app
 
 ## Project setup
-```
-yarn install
-```
+Ensure that you have Yarn installed on your PC: https://yarnpkg.com/lang/en/docs/install/#windows-stable 
 
-### Compiles and hot-reloads for development
+### Run Application
+Installs node modules and runs application
 ```
 yarn serve
 ```
