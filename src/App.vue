@@ -40,11 +40,13 @@
                     </label>
                 </div>
                 <div>
-                    <span v-for="(attribute, index) in user.attributeIds">{{ attribute }}
+                    <span v-for="(attribute, index) in user.attributeIds">{{ mapAttributeId(attribute) }}
                         <span v-if="user.attributeIds.length !== (index + 1)">| </span>
                     </span>
                 </div>
             </div>
+
+            <p v-if="displayedRecords.length === 0">No records found.</p>
 
 <!--            TODO: include pagination at top of page as well -->
             <div id="pagination">
@@ -188,25 +190,30 @@
             //</editor-fold>
 
             //<editor-fold desc="Pagination">
-            //TODO: if user goes beyond next or more back than back
+            //TODO: if user goes beyond next or more back than back, disable buttons
             backToStart() {
                 this.currentPage = 0;
             },
             previous() {
-                this.currentPage -= this.numberOfRecordsPerPage;
+                if (this.currentPage !== 0) this.currentPage -= this.numberOfRecordsPerPage;
             },
             next() {
-                this.currentPage += this.numberOfRecordsPerPage;
+                if (this.currentPage !== this.users.length - 1) this.currentPage += this.numberOfRecordsPerPage;
             },
             goToEnd() {
-                this.currentPage = this.users.length -1;
+                this.currentPage = this.users.length - 1;
             },
             //</editor-fold>
 
             //<editor-fold desc="Table Features">
             /**
              *
+             * @param id
+             * @returns {T | string | *}
              */
+            mapAttributeId(id) {
+                return this.attributes.find(attribute => { if (attribute.id === id) return attribute.title }).title;
+            },
             applyFilter() {
 
                 const selectedFilterOption = document.getElementById('filter_by').value;
