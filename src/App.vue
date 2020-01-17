@@ -27,9 +27,11 @@
                 </div>
             </div>
 
-            <div>
+            <div id="pagination">
+                <button id="btn_back_to_start" @click="backToStart()">Back to start</button>
                 <button id="btn_previous" @click="previous()">Previous</button>
                 <button id="btn_next" @click="next()">Next</button>
+                <button id="btn_go_to_end" @click="goToEnd()">Go to end</button>
             </div>
         </div>
     </div>
@@ -153,11 +155,17 @@
             setAttributesForUser() {
                 this.users[this.users.length - 1].attributeIds = this.attributeIds;
             },
+            backToStart() {
+                this.currentPage = 0;
+            },
             previous() {
                 this.currentPage -= this.numberOfRecordsPerPage;
             },
             next() {
                 this.currentPage += this.numberOfRecordsPerPage;
+            },
+            goToEnd() {
+                this.currentPage = this.users.length -1;
             },
             cleanString(value) {
                 return value.replace(/"/g, '');

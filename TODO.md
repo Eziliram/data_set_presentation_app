@@ -2,7 +2,7 @@
 
 As a user running the application:
 
-1. I want to view (browse through) all user records.
+1.[DONE] I want to view (browse through) all user records.
 
 2. I want to edit/modify the name field of any user record.
 
