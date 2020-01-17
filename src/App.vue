@@ -16,7 +16,9 @@
 
         data: () => {
             return {
-
+                attributes: [],
+                users: [],
+                attributeIds: []
             }
         },
 
@@ -25,22 +27,42 @@
              *
              */
             async processData() {
-
-                let attributes = [];
-                let users = [];
-
                 // Get the data from the data file
                 await $.get('anonymous-msweb.data', data => {
 
                     let dataLines = data.split('\n');
 
+                    // Process Attributes and User data
                     dataLines.forEach(dataLine => {
-                        if (dataLine.charAt(0) === 'A') attributes.push(this.getAttributes(dataLine.split(',')));
-                        // TODO: store users
+
+                        let dataLineArray = dataLine.split(',');
+
+                        switch (dataLine.charAt(0)) {
+                            case 'A': // Attribute lines (vRoots)
+                                this.attributes.push(this.getAttributes(dataLineArray));
+                                break;
+                            case 'C': // Case lines (users)
+                                if (this.users.length > 0) {
+                                    this.setAttributesForUser();
+                                    this.attributeIds = [];
+                                }
+                                this.users.push(this.getUsers(dataLineArray));
+                                break;
+                            case 'V': // Vote lines (attributes/vRoots a user has visited)
+                                this.setAttributeIdForUser(dataLineArray);
+                                break;
+                            case '': // End of file
+                                this.setAttributesForUser();
+                                break;
+                            default:
+                                break;
+                        }
                     });
                 });
 
-                console.log(attributes)
+                //todo: remove
+                console.log(this.attributes)
+                console.log(this.users)
             },
             /**
              *
@@ -52,19 +74,51 @@
                 let attributes = [];
 
                 data.forEach(attribute => {
-                    // Ignore the elements containing 'A' and '1'
-                    if (attribute === 'A' || attribute === '1') return; //todo: filter this in a better way
-                    attributes.push(attribute.replace(/"/g, ''));
+                    attributes.push(this.cleanString(attribute));
                 });
 
+                // Ignore elements containing 'A' and '1'
                 return {
-                    id: attributes[0],
-                    title: attributes[1],
-                    url: attributes[2]
+                    id: attributes[1],
+                    title: attributes[3],
+                    url: attributes[4]
                 };
             },
+            /**
+             *
+             * @param data
+             * @returns {{name: *, id: *}}
+             */
             getUsers(data) {
 
+                let users = [];
+
+                data.forEach(user => {
+                    users.push(this.cleanString(user));
+                });
+
+                // Ignore element containing 'C'
+                return {
+                    id: users[1],
+                    name: users[2],
+                    attributeIds: []
+                }
+            },
+            /**
+             *
+             * @param data
+             */
+            setAttributeIdForUser(data) {
+                this.attributeIds.push(data[1])
+            },
+            /**
+             *
+             */
+            setAttributesForUser() {
+                this.users[this.users.length - 1].attributeIds = this.attributeIds;
+            },
+            cleanString(value) {
+                return value.replace(/"/g, '');
             }
         }
     }

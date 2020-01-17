@@ -27,6 +27,9 @@
 - Number of requirements that have been met
 - Bonus points for implementing any extra features applicable to this problem i.e. surprise us!
 
-
 # References
 - https://api.jquery.com/jquery.get/
+
+# Issues
+- Reading data?
+- Get user vroots
