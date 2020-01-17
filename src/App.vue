@@ -1,5 +1,19 @@
 <template>
     <div id="app">
+        <div>
+            <label for="filter_by">Filter by attribute</label>
+
+            <select id="filter_by">
+                <option value="">Please select</option>
+                <template v-for="attribute in attributes">
+                    <option :value="attribute.id">{{ attribute.title }}</option>
+                </template>
+            </select>
+
+            <button @click="applyFilter()">Apply Filter</button>
+            <button @click="removeFilter()">Remove Filters</button>
+        </div>
+        
         <div id="data_container">
             <div class="header data-row">
                 <div>
@@ -19,7 +33,7 @@
                     </label>
                 </div>
                 <div>{{ user.id }}</div>
-                <div @click="enableEditUser(index)">
+                <div @click="selectedUserIndex = index">
                     <span v-if="selectedUserIndex !== index">{{ user.name }}</span>
                     <label>
                         <input v-if="selectedUserIndex === index" type="text" v-model="user.name"/>
@@ -55,7 +69,9 @@
 
         data: () => {
             return {
-                editUser: false,
+                filter: false,
+                filteredUsers: [],
+
                 selectedUserIndex: null,
 
                 currentPage: 0,
@@ -69,8 +85,12 @@
 
         computed: {
             displayedRecords() {
-                return this.users.slice(this.currentPage, this.currentPage + this.numberOfRecordsPerPage);
-            }
+
+                if (!this.filter) return this.users.slice(this.currentPage, this.currentPage + this.numberOfRecordsPerPage);
+                this.filter = false;
+                return this.filteredUsers;
+            },
+
         },
 
         methods: {
@@ -168,6 +188,7 @@
             //</editor-fold>
 
             //<editor-fold desc="Pagination">
+            //TODO: if user goes beyond next or more back than back
             backToStart() {
                 this.currentPage = 0;
             },
@@ -182,14 +203,27 @@
             },
             //</editor-fold>
 
-            //<editor-fold desc="Table">
+            //<editor-fold desc="Table Features">
             /**
              *
-             * @param selectedUserIndex
              */
-            enableEditUser(selectedUserIndex) {
-                this.selectedUserIndex = selectedUserIndex;
-                this.editUser = true;
+            applyFilter() {
+
+                const selectedFilterOption = document.getElementById('filter_by').value;
+                let filteredUsers = [];
+
+                this.filter = true;
+                this.users.forEach(user => {
+                    let result = user.attributeIds.filter((attr) => { return attr === selectedFilterOption });
+                    if (result.length !== 0) filteredUsers.push(user);
+                });
+
+                filteredUsers.forEach(user => this.filteredUsers.push(user));
+            },
+            removeFilter() {
+                this.filter = false;
+                this.filteredUsers = [];
+                document.getElementById('filter_by').value = '';
             },
             //</editor-fold>
 
@@ -208,6 +242,12 @@
         color #2C3E50
         margin-top 60px
 
+    #filter_by
+        option
+            &:first-child
+                color #8D9AA8
+                font-style italic
+
     .header
         font-weight 600
         border-bottom 1px solid #2C3E50
@@ -222,5 +262,4 @@
                 width 100px
             &:nth-child(3)
                 width 100px
-
 </style>
