@@ -2,7 +2,7 @@
     <div id="app">
         <div id="search_container">
             <label>
-                <input id="txt_search" type="text"/>
+                <input id="txt_search" type="text" placeholder="Search value"/>
             </label>
 
             <button id="btn_search" @click="search()">Search</button>
@@ -10,10 +10,9 @@
         </div>
 
         <div id="filter_container">
-            <label for="drp_filter">Filter by attribute</label>
-
+            <label for="drp_filter"/>
             <select id="drp_filter">
-                <option value="">Please select</option>
+                <option value="" disabled>Please select</option>
                 <template v-for="attribute in attributes">
                     <option :value="attribute.id">{{ attribute.title }}</option>
                 </template>
@@ -22,7 +21,22 @@
             <button id="btn_apply_filter" @click="applyFilter()">Apply Filter</button>
             <button id="btn_remove_filter" @click="reset()">Reset</button>
         </div>
-        
+
+        <div>
+            <label>
+                <input id="txt_collection_name" type="text" placeholder="Collection name"/>
+            </label>
+            <button id="btn_create_new_collection" @click="createNewCollection()">Create new collection</button>
+        </div>
+
+        <!-- TODO: add to bottom of page as well (create a component) -->
+        <div id="pagination">
+            <button id="btn_back_to_start" @click="backToStart()">Back to start</button>
+            <button id="btn_previous" @click="previous()">Previous</button>
+            <button id="btn_next" @click="next()">Next</button>
+            <button id="btn_go_to_end" @click="goToEnd()">Go to end</button>
+        </div>
+
         <div id="data_container">
             <div class="table-header data-row">
                 <div>
@@ -56,14 +70,6 @@
             </div>
 
             <p v-if="displayedRecords.length === 0">No records found.</p>
-
-<!--            TODO: include pagination at top of page as well -->
-            <div id="pagination">
-                <button id="btn_back_to_start" @click="backToStart()">Back to start</button>
-                <button id="btn_previous" @click="previous()">Previous</button>
-                <button id="btn_next" @click="next()">Next</button>
-                <button id="btn_go_to_end" @click="goToEnd()">Go to end</button>
-            </div>
         </div>
     </div>
 </template>
@@ -80,6 +86,8 @@
 
         data: () => {
             return {
+                collections: [],
+
                 isResult: false,
                 results: [],
 
@@ -265,6 +273,18 @@
                 this.results = [];
                 this.isResult = false;
             },
+            createNewCollection() {
+
+                const name = document.getElementById('txt_collection_name').value;
+                let records = [];
+
+                // Retrieve all records that are selected
+                this.displayedRecords.forEach(record => {
+                    if (document.getElementById('chk_' + record.id).checked) records.push(record);
+                });
+
+                this.collections.push({ name, records });
+            },
             //</editor-fold>
 
             //<editor-fold desc="Utility Functions">
@@ -285,8 +305,7 @@
     #drp_filter
         option
             &:first-child
-                color #8D9AA8
-                font-style italic
+                color #D3D3D3
 
     .table-header
         font-weight 600
