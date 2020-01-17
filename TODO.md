@@ -4,7 +4,7 @@ As a user running the application:
 
 1.[DONE] I want to view (browse through) all user records.
 
-2. I want to edit/modify the name field of any user record.
+2.[DONE] I want to edit/modify the name field of any user record.
 
 3. I want to filter user records by the Vroot title attribute; i.e. only user records matching the defined Vroot should be displayed.
 

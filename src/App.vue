@@ -19,7 +19,12 @@
                     </label>
                 </div>
                 <div>{{ user.id }}</div>
-                <div>{{ user.name }}</div>
+                <div @click="enableEditUser(index)">
+                    <span v-if="selectedUserIndex !== index">{{ user.name }}</span>
+                    <label>
+                        <input v-if="selectedUserIndex === index" type="text" v-model="user.name"/>
+                    </label>
+                </div>
                 <div>
                     <span v-for="(attribute, index) in user.attributeIds">{{ attribute }}
                         <span v-if="user.attributeIds.length !== (index + 1)">| </span>
@@ -27,6 +32,7 @@
                 </div>
             </div>
 
+<!--            TODO: include pagination at top of page as well -->
             <div id="pagination">
                 <button id="btn_back_to_start" @click="backToStart()">Back to start</button>
                 <button id="btn_previous" @click="previous()">Previous</button>
@@ -49,6 +55,9 @@
 
         data: () => {
             return {
+                editUser: false,
+                selectedUserIndex: null,
+
                 currentPage: 0,
                 numberOfRecordsPerPage: 50,
 
@@ -65,6 +74,7 @@
         },
 
         methods: {
+            //<editor-fold desc="Data Processing">
             /**
              *
              */
@@ -155,6 +165,9 @@
             setAttributesForUser() {
                 this.users[this.users.length - 1].attributeIds = this.attributeIds;
             },
+            //</editor-fold>
+
+            //<editor-fold desc="Pagination">
             backToStart() {
                 this.currentPage = 0;
             },
@@ -167,9 +180,24 @@
             goToEnd() {
                 this.currentPage = this.users.length -1;
             },
+            //</editor-fold>
+
+            //<editor-fold desc="Table">
+            /**
+             *
+             * @param selectedUserIndex
+             */
+            enableEditUser(selectedUserIndex) {
+                this.selectedUserIndex = selectedUserIndex;
+                this.editUser = true;
+            },
+            //</editor-fold>
+
+            //<editor-fold desc="Utility Functions">
             cleanString(value) {
                 return value.replace(/"/g, '');
             }
+            //</editor-fold>
         }
     }
 </script>
