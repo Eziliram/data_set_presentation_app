@@ -3,12 +3,46 @@
         <div id="collections_container">
             <h3>Collections</h3>
 
-            <template v-for="collection in collections">
-                <div class="collection">{{ collection.name }}</div>
-            </template>
+            <div v-for="collection in collections"
+                 class="collection"
+                 @click="viewCollection(collection.records)">{{ collection.name }}
+            </div>
 
             <p v-if="collections.length === 0">You have no collections.</p>
+
+            <div>
+                <label>
+                    <input id="chk_new_collection" type="checkbox" @change="isNewCollection = !isNewCollection" checked>
+                    Save selected records to a new collection?
+                </label>
+
+                <template v-if="isNewCollection">
+                    <label>
+                        <input id="txt_collection_name" type="text" placeholder="Collection name"/>
+                    </label>
+
+                    <button id="btn_create_new_collection" @click="createNewCollection()">Create new collection</button>
+                </template>
+
+                <template v-else>
+                    <template v-if="collections.length !== 0">
+                        <label for="drp_collections">Add to existing list</label>
+
+                        <select id="drp_collections">
+                            <template v-for="(collection, index) in collections">
+                                <option :value="index">{{ collection.name }}</option>
+                            </template>
+                        </select>
+                    </template>
+
+                    <template v-else>
+                        <p>You have no saved collections.</p>
+                    </template>
+                </template>
+            </div>
         </div>
+
+<!--        TODO: Create a global reset/clear button -->
 
         <div id="dashboard">
             <div id="query_container">
@@ -43,7 +77,6 @@
             </div>
 
             <div id="table-container">
-                <!-- TODO: add to bottom of page as well (create a component) -->
                 <div id="pagination">
                     <button id="btn_back_to_start" @click="backToStart()">Back to start</button>
                     <button id="btn_previous" @click="previous()">Previous</button>
@@ -63,34 +96,34 @@
                         <div>ATTRIBUTES</div>
                     </div>
 
-                    <div class="data-row" v-for="(user, index) in displayedRecords" v-if="index < numberOfRecordsPerPage">
+                    <div class="data-row" v-for="(user, index) in displayedRecords"
+                         v-if="index < numberOfRecordsPerPage">
                         <div>
                             <label>
-                                <input :id="'chk_' + user.id" type="checkbox"/>
+                                <input :id="'chk_' + user.id" type="checkbox" @change="setSelectedRecord(user)"/>
                             </label>
                         </div>
+
                         <div>{{ user.id }}</div>
+
                         <div @click="selectedUserIndex = index">
                             <span v-if="selectedUserIndex !== index">{{ user.name }}</span>
+
                             <label>
                                 <input v-if="selectedUserIndex === index" type="text" v-model="user.name"/>
                             </label>
                         </div>
+
                         <div>
-                    <span v-for="(attribute, index) in user.attributeIds">{{ mapAttributeId(attribute) }}
-                        <span v-if="user.attributeIds.length !== (index + 1)">| </span>
-                    </span>
+                            <span v-for="(attribute, index) in user.attributeIds">{{ mapAttributeId(attribute) }}
+                                <span v-if="user.attributeIds.length !== (index + 1)">| </span>
+                            </span>
                         </div>
                     </div>
 
                     <p v-if="displayedRecords.length === 0">No records found.</p>
 
-                    <div>
-                        <label>
-                            <input id="txt_collection_name" type="text" placeholder="Collection name"/>
-                        </label>
-                        <button id="btn_create_new_collection" @click="createNewCollection()">Create new collection</button>
-                    </div>
+                    <!-- TODO: add pagination to bottom of page as well (create a component) -->
                 </div>
             </div>
         </div>
@@ -114,10 +147,12 @@
                 isResult: false,
                 results: [],
 
-                selectedUserIndex: null,
+                selectedRecords: [],
+                selectedUserIndex: null, //todo: rename
+                isNewCollection: true,
 
                 currentPage: 0,
-                numberOfRecordsPerPage: 50,
+                numberOfRecordsPerPage: 30, //todo: set to 50 when done
 
                 attributes: [],
                 users: [],
@@ -134,6 +169,13 @@
         },
 
         methods: {
+            setSelectedRecord(user) {
+                document.getElementById('chk_' + user.id).checked
+                    ? this.selectedRecords.push(user)
+                    : this.selectedRecords.find((record, index) => {
+                        if (record.id === user.id) this.selectedRecords.splice(index, 1);
+                    });
+            },
             //<editor-fold desc="Data Processing">
             /**
              *
@@ -246,7 +288,9 @@
              * @returns {T | string | *}
              */
             mapAttributeId(id) {
-                return this.attributes.find(attribute => { if (attribute.id === id) return attribute.title }).title;
+                return this.attributes.find(attribute => {
+                    if (attribute.id === id) return attribute.title
+                }).title;
             },
             /**
              *
@@ -256,7 +300,9 @@
                 const searchValue = document.getElementById('txt_search').value;
                 let searchResults = this.users.filter(user => {
                     if (user.name.match(searchValue) !== null) return user.name.match(searchValue);
-                    let attributeResults = user.attributeIds.filter(id => { return this.mapAttributeId(id).toLowerCase().match(searchValue.toLowerCase()) });
+                    let attributeResults = user.attributeIds.filter(id => {
+                        return this.mapAttributeId(id).toLowerCase().match(searchValue.toLowerCase())
+                    });
                     if (attributeResults.length !== 0) return user;
                 });
 
@@ -265,7 +311,7 @@
                 searchResults.forEach(result => this.results.push(result));
             },
             clear() {
-                this.clearResults();
+                this.toggleResults(false);
                 document.getElementById('txt_search').value = '';
             },
             /**
@@ -276,8 +322,7 @@
                 const selectedFilterOption = document.getElementById('drp_filter').value;
                 let filteredResults = [];
 
-                this.results = []; // Clear results
-                this.isResult = true;
+                this.toggleResults();
                 this.users.forEach(user => {
                     let result = user.attributeIds.filter(attr => { return attr === selectedFilterOption });
                     if (result.length !== 0) filteredResults.push(user);
@@ -289,12 +334,12 @@
              *
              */
             reset() {
-                this.clearResults();
+                this.toggleResults(false);
                 document.getElementById('drp_filter').value = '';
             },
-            clearResults() {
+            toggleResults(enable = true) {
                 this.results = [];
-                this.isResult = false;
+                this.isResult = enable;
             },
             createNewCollection() {
 
@@ -306,7 +351,12 @@
                     if (document.getElementById('chk_' + record.id).checked) records.push(record);
                 });
 
-                this.collections.push({ name, records });
+                this.collections.push({name, records});
+            },
+            viewCollection(records) {
+
+                this.toggleResults();
+                records.forEach(record => this.results.push(record))
             },
             //</editor-fold>
 

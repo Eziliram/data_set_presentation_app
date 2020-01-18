@@ -33,5 +33,6 @@
 # Issues
 - Reading data?
 - Get user vroots
+- working with the ids of the checkboxes of the selected records to be saved into a collection, states of checked and unchecked for a specific user
 
 -if had more time, better pagination for data table
