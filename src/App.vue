@@ -46,13 +46,17 @@
 
         <div id="dashboard">
             <div id="query_container">
+                <div>
+                    <button @click="reset()">Reset</button>
+                </div>
+
                 <div id="search_container">
                     <label>
                         <input id="txt_search" type="text" placeholder="Search value"/>
                     </label>
 
                     <button id="btn_search" @click="search()">Search</button>
-                    <button id="btn_clear" @click="clear()">Clear</button>
+                    <button id="btn_clear" @click="clearSearch()">Clear</button>
                 </div>
 
                 <div id="filter_container">
@@ -65,7 +69,7 @@
                     </select>
 
                     <button id="btn_apply_filter" @click="applyFilter()">Apply Filter</button>
-                    <button id="btn_remove_filter" @click="reset()">Reset</button>
+                    <button id="btn_remove_filter" @click="clearFilter()">Clear</button>
                 </div>
 
                 <div>
@@ -100,7 +104,7 @@
                          v-if="index < numberOfRecordsPerPage">
                         <div>
                             <label>
-                                <input :id="'chk_' + user.id" type="checkbox" @change="setSelectedRecord(user)"/>
+                                <input :id="'chk_' + user.id" type="checkbox" @change="setSelectedRecord(user)" :checked="checked(user)"/>
                             </label>
                         </div>
 
@@ -169,11 +173,14 @@
         },
 
         methods: {
+            checked(user) {
+                return this.selectedRecords.find(record => { return record.id === user.id }) !== undefined;
+            },
             setSelectedRecord(user) {
                 document.getElementById('chk_' + user.id).checked
                     ? this.selectedRecords.push(user)
                     : this.selectedRecords.find((record, index) => {
-                        if (record.id === user.id) this.selectedRecords.splice(index, 1);
+                        if (record && record.id === user.id) this.selectedRecords.splice(index, 1);
                     });
             },
             //<editor-fold desc="Data Processing">
@@ -182,6 +189,7 @@
              */
             async processData() {
                 // Get the data from the data file
+                //todo: js way to get data?
                 await $.get('anonymous-msweb.data', data => {
 
                     let dataLines = data.split('\n');
@@ -267,6 +275,7 @@
 
             //<editor-fold desc="Pagination">
             //TODO: if user goes beyond next or more back than back, disable buttons
+            //TODO: while when viewing a different result set, next and end goes into infinity
             backToStart() {
                 this.currentPage = 0;
             },
@@ -274,10 +283,10 @@
                 if (this.currentPage !== 0) this.currentPage -= this.numberOfRecordsPerPage;
             },
             next() {
-                if (this.currentPage !== this.users.length - 1) this.currentPage += this.numberOfRecordsPerPage;
+                if (this.currentPage !== (this.isResult ? this.results.length - 1 : this.users.length - 1)) this.currentPage += this.numberOfRecordsPerPage;
             },
             goToEnd() {
-                this.currentPage = this.users.length - 1;
+                this.currentPage = (this.isResult ? this.results.length - 1 : this.users.length - 1);
             },
             //</editor-fold>
 
@@ -291,6 +300,12 @@
                 return this.attributes.find(attribute => {
                     if (attribute.id === id) return attribute.title
                 }).title;
+            },
+            reset() {
+                this.currentPage = 0;
+                this.clearSearch();
+                this.clearFilter();
+                // this.clearCheckboxes();
             },
             /**
              *
@@ -306,11 +321,10 @@
                     if (attributeResults.length !== 0) return user;
                 });
 
-                this.results = []; // Clear results
-                this.isResult = true;
+                this.toggleResults();
                 searchResults.forEach(result => this.results.push(result));
             },
-            clear() {
+            clearSearch() {
                 this.toggleResults(false);
                 document.getElementById('txt_search').value = '';
             },
@@ -333,30 +347,29 @@
             /**
              *
              */
-            reset() {
+            clearFilter() {
                 this.toggleResults(false);
                 document.getElementById('drp_filter').value = '';
             },
+            // clearCheckboxes() {
+            //     this.selectedRecords.forEach(record => document.getElementById('chk_' + record.id).checked = false);
+            // },
             toggleResults(enable = true) {
                 this.results = [];
+                this.currentPage = 0;
                 this.isResult = enable;
             },
             createNewCollection() {
 
                 const name = document.getElementById('txt_collection_name').value;
-                let records = [];
+                this.collections.push({ name, records: this.selectedRecords });
 
-                // Retrieve all records that are selected
-                this.displayedRecords.forEach(record => {
-                    if (document.getElementById('chk_' + record.id).checked) records.push(record);
-                });
-
-                this.collections.push({name, records});
+                // this.clearCheckboxes();
+                document.getElementById('txt_collection_name').value = '';
             },
             viewCollection(records) {
-
                 this.toggleResults();
-                records.forEach(record => this.results.push(record))
+                records.forEach(record => this.results.push(record));
             },
             //</editor-fold>
 
