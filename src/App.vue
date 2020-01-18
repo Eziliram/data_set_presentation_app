@@ -1,75 +1,98 @@
 <template>
     <div id="app">
-        <div id="search_container">
-            <label>
-                <input id="txt_search" type="text" placeholder="Search value"/>
-            </label>
+        <div id="collections_container">
+            <h3>Collections</h3>
 
-            <button id="btn_search" @click="search()">Search</button>
-            <button id="btn_clear" @click="clear()">Clear</button>
+            <template v-for="collection in collections">
+                <div class="collection">{{ collection.name }}</div>
+            </template>
+
+            <p v-if="collections.length === 0">You have no collections.</p>
         </div>
 
-        <div id="filter_container">
-            <label for="drp_filter"/>
-            <select id="drp_filter">
-                <option value="" disabled>Please select</option>
-                <template v-for="attribute in attributes">
-                    <option :value="attribute.id">{{ attribute.title }}</option>
-                </template>
-            </select>
+        <div id="dashboard">
+            <div id="query_container">
+                <div id="search_container">
+                    <label>
+                        <input id="txt_search" type="text" placeholder="Search value"/>
+                    </label>
 
-            <button id="btn_apply_filter" @click="applyFilter()">Apply Filter</button>
-            <button id="btn_remove_filter" @click="reset()">Reset</button>
-        </div>
+                    <button id="btn_search" @click="search()">Search</button>
+                    <button id="btn_clear" @click="clear()">Clear</button>
+                </div>
 
-        <div>
-            <label>
-                <input id="txt_collection_name" type="text" placeholder="Collection name"/>
-            </label>
-            <button id="btn_create_new_collection" @click="createNewCollection()">Create new collection</button>
-        </div>
+                <div id="filter_container">
+                    <label for="drp_filter"/>
+                    <select id="drp_filter">
+                        <option value="" disabled selected>Please select</option>
+                        <template v-for="attribute in attributes">
+                            <option :value="attribute.id">{{ attribute.title }}</option>
+                        </template>
+                    </select>
 
-        <!-- TODO: add to bottom of page as well (create a component) -->
-        <div id="pagination">
-            <button id="btn_back_to_start" @click="backToStart()">Back to start</button>
-            <button id="btn_previous" @click="previous()">Previous</button>
-            <button id="btn_next" @click="next()">Next</button>
-            <button id="btn_go_to_end" @click="goToEnd()">Go to end</button>
-        </div>
+                    <button id="btn_apply_filter" @click="applyFilter()">Apply Filter</button>
+                    <button id="btn_remove_filter" @click="reset()">Reset</button>
+                </div>
 
-        <div id="data_container">
-            <div class="table-header data-row">
                 <div>
                     <label>
-                        <input id="select_all" type="checkbox"/>
+                        Number of records displayed
+                        <input type="text" v-model="numberOfRecordsPerPage"/>
                     </label>
                 </div>
-                <div>ID</div>
-                <div>USER</div>
-                <div>ATTRIBUTES</div>
             </div>
 
-            <div class="data-row" v-for="(user, index) in displayedRecords" v-if="index < numberOfRecordsPerPage">
-                <div>
-                    <label>
-                        <input :id="'chk_' + user.id" type="checkbox"/>
-                    </label>
+            <div id="table-container">
+                <!-- TODO: add to bottom of page as well (create a component) -->
+                <div id="pagination">
+                    <button id="btn_back_to_start" @click="backToStart()">Back to start</button>
+                    <button id="btn_previous" @click="previous()">Previous</button>
+                    <button id="btn_next" @click="next()">Next</button>
+                    <button id="btn_go_to_end" @click="goToEnd()">Go to end</button>
                 </div>
-                <div>{{ user.id }}</div>
-                <div @click="selectedUserIndex = index">
-                    <span v-if="selectedUserIndex !== index">{{ user.name }}</span>
-                    <label>
-                        <input v-if="selectedUserIndex === index" type="text" v-model="user.name"/>
-                    </label>
-                </div>
-                <div>
+
+                <div id="data_container">
+                    <div class="table-header data-row">
+                        <div>
+                            <label>
+                                <input id="select_all" type="checkbox"/>
+                            </label>
+                        </div>
+                        <div>ID</div>
+                        <div>USER</div>
+                        <div>ATTRIBUTES</div>
+                    </div>
+
+                    <div class="data-row" v-for="(user, index) in displayedRecords" v-if="index < numberOfRecordsPerPage">
+                        <div>
+                            <label>
+                                <input :id="'chk_' + user.id" type="checkbox"/>
+                            </label>
+                        </div>
+                        <div>{{ user.id }}</div>
+                        <div @click="selectedUserIndex = index">
+                            <span v-if="selectedUserIndex !== index">{{ user.name }}</span>
+                            <label>
+                                <input v-if="selectedUserIndex === index" type="text" v-model="user.name"/>
+                            </label>
+                        </div>
+                        <div>
                     <span v-for="(attribute, index) in user.attributeIds">{{ mapAttributeId(attribute) }}
                         <span v-if="user.attributeIds.length !== (index + 1)">| </span>
                     </span>
+                        </div>
+                    </div>
+
+                    <p v-if="displayedRecords.length === 0">No records found.</p>
+
+                    <div>
+                        <label>
+                            <input id="txt_collection_name" type="text" placeholder="Collection name"/>
+                        </label>
+                        <button id="btn_create_new_collection" @click="createNewCollection()">Create new collection</button>
+                    </div>
                 </div>
             </div>
-
-            <p v-if="displayedRecords.length === 0">No records found.</p>
         </div>
     </div>
 </template>
@@ -300,7 +323,29 @@
     #app
         font-family 'Roboto', Helvetica, Arial, sans-serif
         color #2C3E50
-        margin-top 60px
+        display flex
+        flex-direction row
+        #collections_container
+            height 100vh
+            width 15%
+            border-right 1px solid #2C3E50
+            .collection
+                cursor pointer
+                &:hover
+                    background-color gold
+        #dashboard
+            width 85%
+            #query_container
+                height 80px
+                margin-bottom 10px
+                display flex
+                flex-direction row
+                border-bottom 1px solid #2C3E50
+                div
+                    align-self flex-end
+                    margin 10px
+            #table-container
+                margin 10px
 
     #drp_filter
         option
