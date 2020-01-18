@@ -156,7 +156,7 @@
                 isNewCollection: true,
 
                 currentPage: 0,
-                numberOfRecordsPerPage: 30, //todo: set to 50 when done
+                numberOfRecordsPerPage: 10, //todo: set to 50 when done
 
                 attributes: [],
                 users: [],
@@ -173,16 +173,6 @@
         },
 
         methods: {
-            checked(user) {
-                return this.selectedRecords.find(record => { return record.id === user.id }) !== undefined;
-            },
-            setSelectedRecord(user) {
-                document.getElementById('chk_' + user.id).checked
-                    ? this.selectedRecords.push(user)
-                    : this.selectedRecords.find((record, index) => {
-                        if (record && record.id === user.id) this.selectedRecords.splice(index, 1);
-                    });
-            },
             //<editor-fold desc="Data Processing">
             /**
              *
@@ -275,18 +265,21 @@
 
             //<editor-fold desc="Pagination">
             //TODO: if user goes beyond next or more back than back, disable buttons
-            //TODO: while when viewing a different result set, next and end goes into infinity
             backToStart() {
                 this.currentPage = 0;
             },
             previous() {
-                if (this.currentPage !== 0) this.currentPage -= this.numberOfRecordsPerPage;
+                if (this.currentPage !== 0) this.currentPage -= parseInt(this.numberOfRecordsPerPage);
             },
             next() {
-                if (this.currentPage !== (this.isResult ? this.results.length - 1 : this.users.length - 1)) this.currentPage += this.numberOfRecordsPerPage;
+                const records = this.isResult ? this.results : this.users;
+                if (records.length <= (this.currentPage + parseInt(this.numberOfRecordsPerPage))) return;
+                this.currentPage += parseInt(this.numberOfRecordsPerPage);
             },
             goToEnd() {
-                this.currentPage = (this.isResult ? this.results.length - 1 : this.users.length - 1);
+                const records = this.isResult ? this.results : this.users;
+                if (records.length <= parseInt(this.numberOfRecordsPerPage)) return;
+                this.currentPage = records.length - 1;
             },
             //</editor-fold>
 
@@ -305,7 +298,7 @@
                 this.currentPage = 0;
                 this.clearSearch();
                 this.clearFilter();
-                // this.clearCheckboxes();
+                this.clearCheckboxes();
             },
             /**
              *
@@ -351,20 +344,35 @@
                 this.toggleResults(false);
                 document.getElementById('drp_filter').value = '';
             },
-            // clearCheckboxes() {
-            //     this.selectedRecords.forEach(record => document.getElementById('chk_' + record.id).checked = false);
-            // },
+            clearCheckboxes() {
+                this.selectedRecords = []; // Clears selected items
+            },
             toggleResults(enable = true) {
                 this.results = [];
                 this.currentPage = 0;
                 this.isResult = enable;
             },
+            checked(user) {
+                return this.selectedRecords.find(record => { return record.id === user.id }) !== undefined;
+            },
+            /**
+             * Add/removes the record that was selected/deselected to/from an array
+             * todo: rename function name
+             */
+            setSelectedRecord(user) {
+                document.getElementById('chk_' + user.id).checked
+                    ? this.selectedRecords.push(user)
+                    : this.selectedRecords.find((record, index) => {
+                        if (record && record.id === user.id) this.selectedRecords.splice(index, 1);
+                    });
+            },
             createNewCollection() {
 
+                //todo: apply validation if field is null
                 const name = document.getElementById('txt_collection_name').value;
-                this.collections.push({ name, records: this.selectedRecords });
 
-                // this.clearCheckboxes();
+                this.collections.push({ name, records: this.selectedRecords });
+                this.clearCheckboxes();
                 document.getElementById('txt_collection_name').value = '';
             },
             viewCollection(records) {

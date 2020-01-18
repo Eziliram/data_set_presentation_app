@@ -10,9 +10,9 @@ As a user running the application:
 
 4.[DONE] I want to search for records by name or Vroot title field.
 
-5. I want to select multiple user records and save the selection as a named collection.
+5.[DONE] I want to select multiple user records and save the selection as a named collection.
 
-6. I want to view a list of named collections.
+6.[DONE] I want to view a list of named collections.
 
 7. I want to edit/modify a collection by adding or removing user records from a collection.
 
