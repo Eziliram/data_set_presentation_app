@@ -14,7 +14,7 @@ As a user running the application:
 
 6.[DONE] I want to view a list of named collections.
 
-7. I want to edit/modify a collection by adding or removing user records from a collection.
+7.[DONE] I want to edit/modify a collection by adding or removing user records from a collection.
 
 8. I want to delete a collection.
 

@@ -28,7 +28,9 @@
 - Bonus points for implementing any extra features applicable to this problem i.e. surprise us!
 
 # References
-- https://api.jquery.com/jquery.get/
+- https://api.jquery.com/
+- https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+- https://material.io/resources/icons/?style=baseline
 
 # Issues
 - Reading data?

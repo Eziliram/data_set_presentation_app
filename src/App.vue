@@ -5,7 +5,8 @@
 
             <div v-for="collection in collections"
                  class="collection"
-                 @click="viewCollection(collection.records)">{{ collection.name }}
+                 :class="{ 'selected-collection': selectedCollection === collection.id }"
+                 @click="viewCollection(collection.id, collection.records)">{{ collection.name }}
             </div>
 
             <p v-if="collections.length === 0">You have no collections.</p>
@@ -21,7 +22,7 @@
                         <input id="txt_collection_name" type="text" placeholder="Collection name"/>
                     </label>
 
-                    <button id="btn_create_new_collection" @click="createNewCollection()">Create new collection</button>
+                    <button id="btn_create_new_collection" @click="addToNewCollection()">Create new collection</button>
                 </template>
 
                 <template v-else>
@@ -33,6 +34,8 @@
                                 <option :value="index">{{ collection.name }}</option>
                             </template>
                         </select>
+
+                        <button @click="addToExistingCollection()">Add</button>
                     </template>
 
                     <template v-else>
@@ -92,20 +95,26 @@
                     <div class="table-header data-row">
                         <div>
                             <label>
-                                <input id="select_all" type="checkbox"/>
+                                <input v-if="!isCollection" id="select_all" type="checkbox"/>
                             </label>
                         </div>
                         <div>ID</div>
                         <div>USER</div>
                         <div>ATTRIBUTES</div>
+                        <div v-if="isCollection"/>
                     </div>
 
-                    <div class="data-row" v-for="(user, index) in displayedRecords"
-                         v-if="index < numberOfRecordsPerPage">
-                        <div>
+                    <div v-if="index < numberOfRecordsPerPage"
+                         v-for="(user, index) in displayedRecords"
+                         class="data-row">
+                        <div v-if="!isCollection">
                             <label>
                                 <input :id="'chk_' + user.id" type="checkbox" @change="setSelectedRecord(user)" :checked="checked(user)"/>
                             </label>
+                        </div>
+
+                        <div v-else>
+                            <img class="delete-record" src="../src/assets/delete.svg" @click="deleteRecord(index)" alt="Delete">
                         </div>
 
                         <div>{{ user.id }}</div>
@@ -146,7 +155,21 @@
 
         data: () => {
             return {
-                collections: [],
+                selectedCollection: null,
+                isCollection: false,
+                collection: [],
+                collections: [
+                    {
+                        id: 1,
+                        name: 'Test',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    }
+                ],
 
                 isResult: false,
                 results: [],
@@ -167,7 +190,13 @@
         computed: {
             // The records that are currently displayed on the screen
             displayedRecords() {
-                let records = this.isResult ? this.results : this.users;
+
+                let records = this.isResult
+                    ? this.results
+                    : this.isCollection
+                        ? this.collection
+                        : this.users;
+
                 return records.slice(this.currentPage, this.currentPage + this.numberOfRecordsPerPage);
             }
         },
@@ -299,6 +328,8 @@
                 this.clearSearch();
                 this.clearFilter();
                 this.clearCheckboxes();
+                this.toggleCollection(false);
+                this.selectedCollection = 0;
             },
             /**
              *
@@ -347,10 +378,15 @@
             clearCheckboxes() {
                 this.selectedRecords = []; // Clears selected items
             },
-            toggleResults(enable = true) {
+            toggleResults(isResult = true) {
                 this.results = [];
                 this.currentPage = 0;
-                this.isResult = enable;
+                this.isResult = isResult;
+            },
+            toggleCollection(isCollection = true) {
+                this.collection = [];
+                this.currentPage = 0;
+                this.isCollection = isCollection;
             },
             checked(user) {
                 return this.selectedRecords.find(record => { return record.id === user.id }) !== undefined;
@@ -366,22 +402,55 @@
                         if (record && record.id === user.id) this.selectedRecords.splice(index, 1);
                     });
             },
-            createNewCollection() {
+            deleteRecord(userIndex) {
 
+                let collectionIndex = this.findCollectionIndex();
+
+                this.collections[collectionIndex].records.find((record, index) => {
+                    if (index === userIndex) this.collections[collectionIndex].records.splice(index, 1); // Delete record
+                });
+
+                this.collection = this.collections[collectionIndex].records; // Display updated records
+            },
+            /**
+             *
+             */
+            addToNewCollection() {
                 //todo: apply validation if field is null
                 const name = document.getElementById('txt_collection_name').value;
 
-                this.collections.push({ name, records: this.selectedRecords });
+                this.collections.push({ id: Date.now(), name, records: this.selectedRecords });
                 this.clearCheckboxes();
                 document.getElementById('txt_collection_name').value = '';
             },
-            viewCollection(records) {
-                this.toggleResults();
-                records.forEach(record => this.results.push(record));
+            /**
+             *
+             */
+            addToExistingCollection() {
+
+                let collectionIndex = document.getElementById('drp_collections').value;
+
+                this.selectedRecords.forEach(selectedRecord => {
+                    const result = this.collections[collectionIndex].records.find(record => { return selectedRecord.id === record.id; });
+                    if (result === undefined) this.collections[collectionIndex].records.push(selectedRecord);
+                    else alert('Item already in collection'); // todo: handle this better?
+                });
+
+                this.clearCheckboxes();
+            },
+            viewCollection(id, records) {
+                this.selectedCollection = id;
+                this.toggleCollection();
+                records.forEach(record => this.collection.push(record));
             },
             //</editor-fold>
 
             //<editor-fold desc="Utility Functions">
+            findCollectionIndex() {
+                return this.collections.findIndex(collection => {
+                    return collection.id === this.selectedCollection;
+                });
+            },
             cleanString(value) {
                 return value.replace(/"/g, '');
             }
@@ -428,15 +497,25 @@
         border-bottom 1px solid #2C3E50
 
     .data-row
+        padding-top 1px
         display flex
         flex-direction row
         div
             &:first-child
-                width 30px
-            &:nth-child(2)
+                width 40px
+            &:nth-child(2) // ID
                 width 100px
-            &:nth-child(3)
+            &:nth-child(3) // User
                 width 100px
-            &:nth-child(4)
-                max-width 1200px
+            &:nth-child(4) // Attribute
+                width 1200px
+
+    .delete-record
+        height 20px
+        &:hover
+            cursor pointer
+
+    .selected-collection
+        color red
+        font-weight 600
 </style>
