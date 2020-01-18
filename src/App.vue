@@ -101,7 +101,10 @@
                             </label>
                         </div>
                         <div>ID</div>
-                        <div>USER</div>
+                        <div>
+                            <span>USER</span> |
+                            <span id="sort" @click="sort()">sort</span>
+                        </div>
                         <div>ATTRIBUTES</div>
                         <div v-if="isCollection"/>
                     </div>
@@ -157,6 +160,8 @@
 
         data: () => {
             return {
+                ascending: true, // By default ascending
+
                 selectedCollection: null,
                 isCollection: false,
                 collection: [],
@@ -333,6 +338,21 @@
                 this.toggleCollection(false);
                 this.selectedCollection = 0;
             },
+            sort() {
+                this.ascending = !this.ascending;
+
+                let records = this.isResult
+                    ? this.results
+                    : this.isCollection
+                        ? this.collection
+                        : this.users;
+
+                records.sort((a, b) => {
+                    if (this.ascending ? a.name < b.name : a.name > b.name) return -1;
+                    if (this.ascending ? a.name > b.name : a.name < b.name) return 2;
+                    return 0;
+                })
+            },
             /**
              *
              */
@@ -454,6 +474,7 @@
             //</editor-fold>
 
             //<editor-fold desc="Utility Functions">
+            //todo: this function is only used in one place?
             findCollectionIndex() {
                 return this.collections.findIndex(collection => {
                     return collection.id === this.selectedCollection;
@@ -503,6 +524,11 @@
         option
             &:first-child
                 color #D3D3D3
+
+    #sort
+        cursor pointer
+        &:hover
+            color dodgerblue
 
     .table-header
         font-weight 600
