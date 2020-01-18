@@ -18,7 +18,7 @@ As a user running the application:
 
 8.[DONE] I want to delete a collection.
 
-9. I want to sort user records by name, whether in a filter or a collection or not.
+9.[DONE] I want to sort user records by name, whether in a filter or a collection or not.
 
 # Notes
 
