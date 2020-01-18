@@ -5,8 +5,9 @@
 
             <div v-for="collection in collections"
                  class="collection"
-                 :class="{ 'selected-collection': selectedCollection === collection.id }"
-                 @click="viewCollection(collection.id, collection.records)">{{ collection.name }}
+                 :class="{ 'selected-collection': selectedCollection === collection.id }">
+                <div @click="viewCollection(collection.id, collection.records)">{{ collection.name }}</div>
+                <img class="delete" src="./assets/delete.svg" @click="deleteCollection(collection)" alt="Delete">
             </div>
 
             <p v-if="collections.length === 0">You have no collections.</p>
@@ -95,6 +96,7 @@
                     <div class="table-header data-row">
                         <div>
                             <label>
+<!--                                TODO: implement select all -->
                                 <input v-if="!isCollection" id="select_all" type="checkbox"/>
                             </label>
                         </div>
@@ -114,7 +116,7 @@
                         </div>
 
                         <div v-else>
-                            <img class="delete-record" src="../src/assets/delete.svg" @click="deleteRecord(index)" alt="Delete">
+                            <img class="delete" src="./assets/delete.svg" @click="deleteRecord(index)" alt="Delete">
                         </div>
 
                         <div>{{ user.id }}</div>
@@ -443,6 +445,12 @@
                 this.toggleCollection();
                 records.forEach(record => this.collection.push(record));
             },
+            deleteCollection(selectedCollection) {
+                this.reset();
+                this.collections.find((collection, index) => {
+                    if (selectedCollection.id === collection.id) this.collections.splice(index, 1); // Delete collection
+                })
+            },
             //</editor-fold>
 
             //<editor-fold desc="Utility Functions">
@@ -470,9 +478,13 @@
             width 15%
             border-right 1px solid #2C3E50
             .collection
-                cursor pointer
+                display flex
+                flex-direction row
                 &:hover
                     background-color gold
+                div
+                    cursor pointer
+                    width 100%
         #dashboard
             width 85%
             #query_container
@@ -510,7 +522,7 @@
             &:nth-child(4) // Attribute
                 width 1200px
 
-    .delete-record
+    .delete
         height 20px
         &:hover
             cursor pointer

@@ -16,7 +16,7 @@ As a user running the application:
 
 7.[DONE] I want to edit/modify a collection by adding or removing user records from a collection.
 
-8. I want to delete a collection.
+8.[DONE] I want to delete a collection.
 
 9. I want to sort user records by name, whether in a filter or a collection or not.
 
