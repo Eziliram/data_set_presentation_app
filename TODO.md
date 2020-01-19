@@ -25,7 +25,9 @@ As a user running the application:
 2.[DONE] Header component including search and filter functionality
 3.[DONE] Collections manager
 4. Add to new or add to existing collection feature, drawer like feature for collections
-5. Table styling
+5.[DONE] Table styling
+6. Select all, total records
+last. move out all components, scripts and styling
 
 # Notes
 

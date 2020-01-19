@@ -87,9 +87,17 @@
             </div>
 
             <div id="table_container">
-                <div id="table_title">{{ tableTitle === null ? 'All records' : 'Collection: ' + tableTitle }}</div>
+                <div id="table_title">
+                    {{ tableTitle === null
+                    ? 'All records'
+                    : isCollection
+                        ? 'Collection: ' + tableTitle
+                        : isResult
+                            ? 'Results containing: \'' + tableTitle + '\''
+                            : 'other' }}
+                </div>
 
-                <div class="table-header data-row">
+                <div id="table_header" class="data-row">
                     <div>
                         <label>
                             <!-- TODO: implement select all -->
@@ -97,13 +105,14 @@
                         </label>
                     </div>
                     <div>ID</div>
-                    <div>
-                        <span>USER</span> |
-                        <span id="sort" @click="sort()">sort</span>
+                    <div class="data-row-user">
+                        <div>USER</div>
+                        <img id="sort" :src="sortIcon" @click="sort()" alt="Sort">
                     </div>
                     <div>ATTRIBUTES</div>
                     <div v-if="isCollection"/>
                 </div>
+
                 <div id="data_container">
                     <div v-if="index < numberOfRecordsPerPage"
                          v-for="(user, index) in displayedRecords"
@@ -129,9 +138,7 @@
                         </div>
 
                         <div>
-                            <span v-for="(attribute, index) in user.attributeIds">{{ mapAttributeId(attribute) }}
-                                <span v-if="user.attributeIds.length !== (index + 1)">| </span>
-                            </span>
+                            <span v-for="(attribute, index) in user.attributeIds">{{ mapAttributeId(attribute) }}<span v-if="user.attributeIds.length !== (index + 1)">, </span></span>
                         </div>
                     </div>
 
@@ -280,6 +287,226 @@
                             { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
                         ]
                     },
+                    { //TODO: Create a test collection?
+                        id: 11,
+                        name: 'Amind',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 112,
+                        name: 'Groceriesfsgh',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 1122,
+                        name: 'Chcikennds',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 11224,
+                        name: '00001',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 112242,
+                        name: 'Thinknings',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 1122425,
+                        name: 'Random collection',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 11224253,
+                        name: 'Insturiuomme',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 112242532,
+                        name: 'Music',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 1122425327,
+                        name: 'Pickadatetesdf',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 11224253272,
+                        name: 'Restauransrntyt',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 109,
+                        name: 'Bug-a-lug',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 11,
+                        name: 'Amind',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 112,
+                        name: 'Groceriesfsgh',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 1122,
+                        name: 'Chcikennds',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 11224,
+                        name: '00001',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 112242,
+                        name: 'Thinknings',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 1122425,
+                        name: 'Random collection',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 11224253,
+                        name: 'Insturiuomme',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 112242532,
+                        name: 'Music',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 1122425327,
+                        name: 'Pickadatetesdf',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 11224253272,
+                        name: 'Restauransrntyt',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
+                    { //TODO: Create a test collection?
+                        id: 109,
+                        name: 'Bug-a-lug',
+                        records: [
+                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
+                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
+                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
+                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
+                        ]
+                    },
                 ],
 
                 isResult: false,
@@ -309,6 +536,9 @@
                         : this.users;
 
                 return records.slice(this.currentPage, this.currentPage + this.numberOfRecordsPerPage);
+            },
+            sortIcon() {
+                return this.ascending ? require('./assets/images/up.svg') : require('./assets/images/down.svg');
             }
         },
 
@@ -445,7 +675,11 @@
                 this.toggleCollection(false);
                 this.selectedCollection = null;
                 this.tableTitle = null;
+                if (!this.ascending) this.sort();
             },
+            /**
+             *
+             */
             sort() {
                 this.ascending = !this.ascending;
 
@@ -467,9 +701,12 @@
             search() {
 
                 this.clearFilter();
+                this.toggleCollection(false);
+                this.selectedCollection = null;
 
                 const searchValue = document.getElementById('txt_search').value;
 
+                this.tableTitle = searchValue;
                 let searchResults = this.users.filter(user => {
                     if (user.name.match(searchValue) !== null) return user.name.match(searchValue);
                     let attributeResults = user.attributeIds.filter(id => {
@@ -491,10 +728,14 @@
             applyFilter() {
 
                 this.clearSearch();
+                this.toggleCollection(false);
+                this.selectedCollection = null;
 
-                const selectedFilterOption = document.getElementById('drp_filter').value;
+                const filter = document.getElementById('drp_filter');
+                const selectedFilterOption = filter.value;
                 let filteredResults = [];
 
+                this.tableTitle = filter.options[filter.selectedIndex].text;
                 this.toggleResults();
                 this.users.forEach(user => {
                     let result = user.attributeIds.filter(attr => { return attr === selectedFilterOption });
@@ -616,7 +857,7 @@
         display flex
         flex-direction row
         #collections_container
-            border-right 1px solid default
+            border-right 2px solid default
             width 15%
             max-height 100%
             #collections_manager-title
@@ -628,15 +869,19 @@
                 text-align center
                 line-height 71px
                 letter-spacing 1.5px
-                height 71px
+                height 74px
             #collections
-                height calc(100vh - 92px)
+                height calc(100vh - 75px)
                 overflow auto
                 font-size 17px
                 .collection
                     display flex
                     flex-direction row
                     padding 0 5px 0 15px
+                    &:first-child
+                        margin-top 17px
+                    &:last-child
+                        margin-bottom 17px
                     &:hover
                         background-color #F4F6F7
                     .delete
@@ -662,21 +907,21 @@
             #query_container
                 position fixed
                 width 100%
-                height 60px
-                padding-bottom 10px
+                height 58px
+                padding-bottom 15px
                 display flex
                 flex-direction row
-                border-bottom 1px solid default
+                border-bottom 1px solid #CCC
+                box-shadow 0 1px 5px #CCC
                 #refresh
                     cursor pointer
                     border 2px solid transparent
                     height 24px
                     margin auto 10px 0
                     padding 1px
-                    transition 200ms ease all
                     &:hover
-                        transform rotate(360deg)
-                        transition 100ms ease all
+                        background-color #F4F6F7
+                        border-radius 25px
                 #search_container
                     margin-right 20px
                 #search_container
@@ -692,48 +937,63 @@
                 position relative
                 margin 71px 0 10px
                 #table_title
-                    font-size 17px
-                    font-weight 600
-                    height 50px
-                    line-height 50px
+                    font-size 18px
+                    font-weight 500
+                    height 60px
+                    line-height 60px
                     padding-left 10px
+                #table_header
+                    height 30px
+                    font-weight 500
+                    line-height 30px
+                    border-bottom 2px solid primary
+                    &:hover
+                        background-color transparent
+                        cursor initial
                 #data_container
-                    height calc(100vh - 190px) //todo: fix this
-                    border-top 1px solid default
-                    border-bottom 1px solid default
+                    height calc(100vh - 250px)
+                    border-bottom 2px solid default
                     overflow-y scroll
 
-    #drp_filter
-        option
-            &:first-child
-                color #D3D3D3
-
-    #sort
-        cursor pointer
-        &:hover
-            color dodgerblue
-
-    .table-header
-        font-weight 600
-
     .data-row
-        padding-top 1px
         display flex
         flex-direction row
+        padding 4px 0 4px 10px
+        .data-row-user
+            display flex
+            flex-direction row
+        &:first-child
+            margin-top 10px
+        &:last-child
+            margin-bottom 10px
+        &:hover
+            cursor pointer
+            background-color #F4F6F7
         div
             &:first-child
                 width 40px
             &:nth-child(2) // ID
                 width 100px
             &:nth-child(3) // User
-                width 100px
+                width 200px
             &:nth-child(4) // Attribute
                 width 1200px
+
+    #sort
+        cursor pointer
+        height 27px
+        padding-left 10px
+
+    #drp_filter
+        option
+            &:first-child
+                color #D3D3D3
 
     #pagination
         text-align center
 
-
+    input[type=checkbox]
+        cursor pointer
 
     input[type=text]
     select
