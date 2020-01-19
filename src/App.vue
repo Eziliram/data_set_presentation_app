@@ -16,41 +16,6 @@
                 </div>
 
                 <p v-if="collections.length === 0">You have no collections.</p>
-
-<!--
-                <div>
-                    <label>
-                        <input id="chk_new_collection" type="checkbox" @change="isNewCollection = !isNewCollection" checked>
-                        Save selected records to a new collection?
-                    </label>
-
-                    <template v-if="isNewCollection">
-                        <label>
-                            <input id="txt_collection_name" type="text" placeholder="Collection name"/>
-                        </label>
-
-                        <button id="btn_create_new_collection" @click="addToNewCollection()">Create new collection</button>
-                    </template>
-
-                    <template v-else>
-                        <template v-if="collections.length !== 0">
-                            <label for="drp_collections">Add to existing list</label>
-
-                            <select id="drp_collections">
-                                <template v-for="(collection, index) in collections">
-                                    <option :value="index">{{ collection.name }}</option>
-                                </template>
-                            </select>
-
-                            <button @click="addToExistingCollection()">Add</button>
-                        </template>
-
-                        <template v-else>
-                            <p>You have no saved collections.</p>
-                        </template>
-                    </template>
-                </div>
--->
             </div>
         </div>
 
@@ -104,16 +69,18 @@
                             <input v-if="!isCollection" id="select_all" type="checkbox"/>
                         </label>
                     </div>
+
                     <div>ID</div>
+
                     <div class="data-row-user">
                         <div>USER</div>
                         <img id="sort" :src="sortIcon" @click="sort()" alt="Sort">
                     </div>
+
                     <div>ATTRIBUTES</div>
-                    <div v-if="isCollection"/>
                 </div>
 
-                <div id="data_container">
+                <div id="data_container" :class="{ 'show-collection-drawer': selectedRecords.length !== 0 }">
                     <div v-if="index < numberOfRecordsPerPage"
                          v-for="(user, index) in displayedRecords"
                          class="data-row">
@@ -152,6 +119,46 @@
                 <button id="btn_previous" @click="previous()">Previous</button>
                 <button id="btn_next" @click="next()">Next</button>
                 <button id="btn_go_to_end" @click="goToEnd()">Go to end</button>
+            </div>
+
+            <div id="add_modify_collection" v-if="selectedRecords.length !== 0">
+                <div>
+                    <template v-if="isNewCollection === null">
+                        <span class="btn primary mr-5" @click="isNewCollection = true">ADD NEW</span>
+                        <span v-if="collections.length !== 0"> OR
+                            <span class="btn primary mr-5" @click="isNewCollection = false">ADD TO EXISTING</span>
+                        </span>
+                        COLLECTION?
+                    </template>
+
+                    <template v-if="isNewCollection">
+                        <label>
+                            <input id="txt_collection_name" type="text" placeholder="Collection name"/>
+                        </label>
+
+                        <span id="btn_create_new_collection" class="btn primary" @click="addToNewCollection()">Add</span>
+                        <span class="btn secondary" @click="isNewCollection = null">Cancel</span>
+                    </template>
+
+                    <template v-if="isNewCollection !== null && !isNewCollection">
+                        <template v-if="collections.length !== 0">
+                            <label for="drp_collections">
+                                <select id="drp_collections">
+                                    <template v-for="(collection, index) in collections">
+                                        <option :value="index">{{ collection.name }}</option>
+                                    </template>
+                                </select>
+                            </label>
+
+                            <span class="btn primary" @click="addToExistingCollection()">Add</span>
+                            <span class="btn secondary" @click="isNewCollection = null">Cancel</span>
+                        </template>
+
+                        <template v-else>
+                            <p>You have no saved collections.</p>
+                        </template>
+                    </template>
+                </div>
             </div>
         </div>
     </div>
@@ -286,227 +293,7 @@
                             { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
                             { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
                         ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 11,
-                        name: 'Amind',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 112,
-                        name: 'Groceriesfsgh',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 1122,
-                        name: 'Chcikennds',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 11224,
-                        name: '00001',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 112242,
-                        name: 'Thinknings',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 1122425,
-                        name: 'Random collection',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 11224253,
-                        name: 'Insturiuomme',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 112242532,
-                        name: 'Music',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 1122425327,
-                        name: 'Pickadatetesdf',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 11224253272,
-                        name: 'Restauransrntyt',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 109,
-                        name: 'Bug-a-lug',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 11,
-                        name: 'Amind',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 112,
-                        name: 'Groceriesfsgh',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 1122,
-                        name: 'Chcikennds',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 11224,
-                        name: '00001',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 112242,
-                        name: 'Thinknings',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 1122425,
-                        name: 'Random collection',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 11224253,
-                        name: 'Insturiuomme',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 112242532,
-                        name: 'Music',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 1122425327,
-                        name: 'Pickadatetesdf',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 11224253272,
-                        name: 'Restauransrntyt',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 109,
-                        name: 'Bug-a-lug',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
+                    }
                 ],
 
                 isResult: false,
@@ -514,7 +301,7 @@
 
                 selectedRecords: [],
                 selectedUserIndex: null, //todo: rename
-                isNewCollection: true,
+                isNewCollection: null,
 
                 currentPage: 0,
                 numberOfRecordsPerPage: 100,
@@ -701,8 +488,10 @@
             search() {
 
                 this.clearFilter();
+                //todo: add to clearSomething
                 this.toggleCollection(false);
                 this.selectedCollection = null;
+                this.selectedRecords = [];
 
                 const searchValue = document.getElementById('txt_search').value;
 
@@ -728,8 +517,10 @@
             applyFilter() {
 
                 this.clearSearch();
+                //todo: add to clearSomething
                 this.toggleCollection(false);
                 this.selectedCollection = null;
+                this.selectedRecords = [];
 
                 const filter = document.getElementById('drp_filter');
                 const selectedFilterOption = filter.value;
@@ -792,11 +583,12 @@
              *
              */
             addToNewCollection() {
-                //todo: apply validation if field is null
+
                 const name = document.getElementById('txt_collection_name').value;
 
                 this.collections.push({ id: Date.now(), name, records: this.selectedRecords });
                 this.clearCheckboxes();
+                this.isNewCollection = null;
                 document.getElementById('txt_collection_name').value = '';
             },
             /**
@@ -813,8 +605,10 @@
                 });
 
                 this.clearCheckboxes();
+                this.isNewCollection = null;
             },
             viewCollection(collection) {
+                this.selectedRecords = [];
                 this.selectedCollection = collection.id;
                 this.tableTitle = collection.name;
                 this.toggleCollection();
@@ -951,9 +745,18 @@
                         background-color transparent
                         cursor initial
                 #data_container
-                    height calc(100vh - 250px)
+                    height calc(100vh - 230px)
                     border-bottom 2px solid default
                     overflow-y scroll
+                    p
+                        padding-left 15px
+            #add_modify_collection
+                height 70px
+                font-size 14px
+                div
+                    text-align center
+                    padding-top 20px
+                    margin-top 10px
 
     .data-row
         display flex
@@ -978,6 +781,9 @@
                 width 200px
             &:nth-child(4) // Attribute
                 width 1200px
+
+    .show-collection-drawer
+        height calc(100vh - 295px) !important
 
     #sort
         cursor pointer
@@ -1038,4 +844,7 @@
         height 16px
         &:hover
             color #090C0F
+
+    .mr-5
+        margin-right 5px
 </style>

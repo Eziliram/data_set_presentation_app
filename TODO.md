@@ -24,9 +24,11 @@ As a user running the application:
 1.[DONE] Layout of app
 2.[DONE] Header component including search and filter functionality
 3.[DONE] Collections manager
-4. Add to new or add to existing collection feature, drawer like feature for collections
+4.[DONE] Add to new or add to existing collection feature, drawer like feature for collections
 5.[DONE] Table styling
 6. Select all, total records
+7. Fix edit user text field
+8. Add Collection feature on collection manager
 last. move out all components, scripts and styling
 
 # Notes
