@@ -23,8 +23,9 @@ As a user running the application:
 #STYLING
 1.[DONE] Layout of app
 2.[DONE] Header component including search and filter functionality
-3. Collections manager
-4. Table styling
+3.[DONE] Collections manager
+4. Add to new or add to existing collection feature, drawer like feature for collections
+5. Table styling
 
 # Notes
 
