@@ -62,6 +62,13 @@
                             : 'other' }}
                 </div>
 
+                <div class="pagination top">
+                    <span class="btn" @click="backToStart()">Back to start</span>
+                    <span class="btn" @click="previous()">Previous</span>
+                    <span class="btn" @click="next()">Next</span>
+                    <span class="btn" @click="goToEnd()">Go to end</span>
+                </div>
+
                 <div id="table_header" class="data-row">
                     <div>
                         <label>
@@ -112,12 +119,11 @@
                 </div>
             </div>
 
-<!--            todo: set start = 1 and end = last page number -->
-            <div id="pagination">
-                <button id="btn_back_to_start" @click="backToStart()">Back to start</button>
-                <button id="btn_previous" @click="previous()">Previous</button>
-                <button id="btn_next" @click="next()">Next</button>
-                <button id="btn_go_to_end" @click="goToEnd()">Go to end</button>
+            <div class="pagination">
+                <span class="btn" @click="backToStart()">Back to start</span>
+                <span class="btn" @click="previous()">Previous</span>
+                <span class="btn" @click="next()">Next</span>
+                <span class="btn" @click="goToEnd()">Go to end</span>
             </div>
 
             <div id="add_modify_collection" v-if="selectedRecords.length !== 0">
@@ -543,6 +549,7 @@
             },
             clearCheckboxes() {
                 this.selectedRecords = []; // Clears selected items
+                document.getElementById('chk_select_all').checked = false;
             },
             toggleResults(isResult = true) {
                 this.results = [];
@@ -735,7 +742,7 @@
                     align-self flex-end
             #table_container
                 position relative
-                margin 71px 0 10px
+                margin-top 71px
                 #table_title
                     font-size 18px
                     font-weight 500
@@ -751,8 +758,8 @@
                         background-color transparent
                         cursor initial
                 #data_container
-                    height calc(100vh - 230px)
-                    border-bottom 2px solid default
+                    height calc(100vh - 219px)
+                    border-bottom 2px solid primary
                     overflow-y scroll
                     p
                         padding-left 15px
@@ -801,9 +808,6 @@
             &:first-child
                 color #D3D3D3
 
-    #pagination
-        text-align center
-
     input[type=checkbox]
         cursor pointer
 
@@ -850,6 +854,26 @@
         height 16px
         &:hover
             color #090C0F
+
+    .pagination
+        height 20px
+        line-height 20px
+        text-align center
+        border-bottom 2px solid primary
+        span
+            padding 2px 15px !important
+            margin-left 0 !important
+            border-right 2px solid primary
+            &:first-child
+                border-left 2px solid primary
+            &:hover
+                background-color primary
+                color #FFF
+    .top
+        border-top 2px solid primary
+
+    .m-0
+        margin 0
 
     .mr-5
         margin-right 5px

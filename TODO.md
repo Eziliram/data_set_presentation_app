@@ -29,6 +29,7 @@ As a user running the application:
 6.[DONE] Select all
 7. Fix edit user text field
 8. Add Collection feature on collection manager
+9. Styling for pagination
 
 last. move out all components, scripts and styling
 
