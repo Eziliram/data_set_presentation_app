@@ -95,11 +95,16 @@
 
                         <div>{{ user.id }}</div>
 
-                        <div @click="selectedUserIndex = index">
-                            <span v-if="selectedUserIndex !== index">{{ user.name }}</span>
+                        <div @mousedown="editUser(index)" @mouseup="setFocusForUserEdit(index)">
+                            <span v-show="selectedUserIndex !== index">{{ user.name }}</span>
 
                             <label>
-                                <input v-if="selectedUserIndex === index" type="text" v-model="user.name"/>
+                                <input :id="'txt_' + index"
+                                       v-show="selectedUserIndex === index"
+                                       class="txt-data-row-user"
+                                       type="text"
+                                       v-model="user.name"
+                                       @focusout="selectedUserIndex = null"/>
                             </label>
                         </div>
 
@@ -185,124 +190,13 @@
                 tableTitle: null,
                 isCollection: false,
                 collection: [],
-                collections: [
-                    { //TODO: Create a test collection?
-                        id: 11,
-                        name: 'Amind',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 112,
-                        name: 'Groceriesfsgh',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 1122,
-                        name: 'Chcikennds',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 11224,
-                        name: '00001',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 112242,
-                        name: 'Thinknings',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 1122425,
-                        name: 'Random collection',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 11224253,
-                        name: 'Insturiuomme',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 112242532,
-                        name: 'Music',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 1122425327,
-                        name: 'Pickadatetesdf',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 11224253272,
-                        name: 'Restauransrntyt',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    },
-                    { //TODO: Create a test collection?
-                        id: 109,
-                        name: 'Bug-a-lug',
-                        records: [
-                            { id: 'test01', name: 'test01', attributeIds: [ '1069', '1275', '1154' ] },
-                            { id: 'test02', name: 'test02', attributeIds: [ '1069', '1154' ] },
-                            { id: 'test03', name: 'test03', attributeIds: [ '1154' ] },
-                            { id: 'test04', name: 'test04', attributeIds: [ '1275', '1154', '1144', '1258' ] },
-                        ]
-                    }
-                ],
+                collections: [],
 
                 isResult: false,
                 results: [],
 
                 selectedRecords: [],
-                selectedUserIndex: null, //todo: rename
+                selectedUserIndex: null,
                 isNewCollection: null,
 
                 currentPage: 0,
@@ -334,6 +228,12 @@
         },
 
         methods: {
+            editUser(index) {
+                this.selectedUserIndex = index;
+            },
+            setFocusForUserEdit(index) {
+                document.getElementById('txt_' + index).focus();
+            },
             setCurrentCollectionFocus(index) {
                 this.currentCollectionFocus = index;
             },
@@ -788,6 +688,11 @@
         .data-row-user
             display flex
             flex-direction row
+        .txt-data-row-user
+            width 100px
+            margin-left 0
+            &:hover
+                cursor text !important
         &:first-child
             margin-top 10px
         &:last-child
@@ -827,6 +732,7 @@
 
     input[type=text]
     select
+        background-color transparent
         cursor pointer
         font-size 14px
         border none
