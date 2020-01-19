@@ -7,7 +7,7 @@
                  class="collection"
                  :class="{ 'selected-collection': selectedCollection === collection.id }">
                 <div @click="viewCollection(collection.id, collection.records)">{{ collection.name }}</div>
-                <img class="delete" src="./assets/delete.svg" @click="deleteCollection(collection)" alt="Delete">
+                <img class="delete" src="./assets/images/delete.svg" @click="deleteCollection(collection)" alt="Delete"/>
             </div>
 
             <p v-if="collections.length === 0">You have no collections.</p>
@@ -46,34 +46,35 @@
             </div>
         </div>
 
-<!--        TODO: Create a global reset/clear button -->
-
         <div id="dashboard">
             <div id="query_container">
-                <div>
-                    <button @click="reset()">Reset</button>
-                </div>
+                <img id="refresh" src="./assets/images/refresh.svg" @click="reset()" alt="Reset"/>
 
                 <div id="search_container">
                     <label>
                         <input id="txt_search" type="text" placeholder="Search value"/>
                     </label>
 
-                    <button id="btn_search" @click="search()">Search</button>
-                    <button id="btn_clear" @click="clearSearch()">Clear</button>
+                    <div class="btn-container">
+                        <div id="btn_search" class="btn primary" @click="search()">Search</div>
+<!--                        <div id="btn_clear" class="btn secondary" @click="clearSearch()">Clear</div>todo:should this be removed?-->
+                    </div>
                 </div>
 
                 <div id="filter_container">
-                    <label for="drp_filter"/>
-                    <select id="drp_filter">
-                        <option value="" disabled selected>Please select</option>
-                        <template v-for="attribute in attributes">
-                            <option :value="attribute.id">{{ attribute.title }}</option>
-                        </template>
-                    </select>
+                    <label for="drp_filter">
+                        <select id="drp_filter">
+                            <option value="" disabled selected>Select filter</option>
+                            <template v-for="attribute in attributes">
+                                <option :value="attribute.id">{{ attribute.title }}</option>
+                            </template>
+                        </select>
+                    </label>
 
-                    <button id="btn_apply_filter" @click="applyFilter()">Apply Filter</button>
-                    <button id="btn_remove_filter" @click="clearFilter()">Clear</button>
+                    <div class="btn-container">
+                        <div id="btn_apply_filter" class="btn primary" @click="applyFilter()">Apply</div>
+<!--                        <div id="btn_remove_filter" class="btn secondary" @click="clearFilter()">Clear</div>todo:should this be removed?-->
+                    </div>
                 </div>
             </div>
 
@@ -104,7 +105,7 @@
                         </div>
 
                         <div v-else>
-                            <img class="delete" src="./assets/delete.svg" @click="deleteRecord(index)" alt="Delete">
+                            <img class="delete" src="./assets/images/delete.svg" @click="deleteRecord(index)" alt="Delete"/>
                         </div>
 
                         <div>{{ user.id }}</div>
@@ -128,6 +129,7 @@
                 </div>
             </div>
 
+<!--            todo: set start = 1 and end = last page number -->
             <div id="pagination">
                 <button id="btn_back_to_start" @click="backToStart()">Back to start</button>
                 <button id="btn_previous" @click="previous()">Previous</button>
@@ -787,8 +789,11 @@
              *
              */
             search() {
-                //TODO: implement 'loading'
+
+                this.clearFilter();
+
                 const searchValue = document.getElementById('txt_search').value;
+
                 let searchResults = this.users.filter(user => {
                     if (user.name.match(searchValue) !== null) return user.name.match(searchValue);
                     let attributeResults = user.attributeIds.filter(id => {
@@ -808,6 +813,8 @@
              *
              */
             applyFilter() {
+
+                this.clearSearch();
 
                 const selectedFilterOption = document.getElementById('drp_filter').value;
                 let filteredResults = [];
@@ -919,16 +926,20 @@
 </script>
 
 <style lang="stylus">
+    primary = #1E90FF
+    secondary = #EFEFEF
+    default = #2C3E50
+
     body
         margin 0
 
     #app
-        font-family 'Roboto', Helvetica, Arial, sans-serif
-        color #2C3E50
+        font-family 'Roboto', sans-serif
+        color default
         display flex
         flex-direction row
         #collections_container
-            border-right 1px solid #2C3E50
+            border-right 1px solid default
             width 15%
             height 100vh
             overflow-y auto
@@ -945,22 +956,39 @@
             #query_container
                 position fixed
                 width 100%
-                height 80px
-                margin-bottom 10px
-                margin-right 10px
+                height 60px
+                padding-bottom 10px
                 display flex
                 flex-direction row
-                border-bottom 1px solid #2C3E50
+                border-bottom 1px solid default
+                #refresh
+                    cursor pointer
+                    border 2px solid transparent
+                    height 24px
+                    margin auto 10px 0
+                    padding 1px
+                    transition 200ms ease all
+                    &:hover
+                        transform rotate(360deg)
+                        transition 100ms ease all
+                #search_container
+                    margin-right 20px
+                #search_container
+                #filter_container
+                    height 50px
+                    display flex
+                    flex-direction row
+                    label
+                        align-self flex-end
                 div
                     align-self flex-end
-                    margin 10px
             #table-container
                 position relative
                 margin 100px 0 10px
                 #data_container
                     height calc(100vh - 170px)
-                    border-top 1px solid #2C3E50
-                    border-bottom 1px solid #2C3E50
+                    border-top 1px solid default
+                    border-bottom 1px solid default
                     overflow-y scroll
 
     #drp_filter
@@ -1001,4 +1029,48 @@
     .selected-collection
         color red
         font-weight 600
+
+    input[type=text]
+    select
+        font-size 14px
+        border none
+        border-bottom 2px solid primary
+        width 250px
+        margin-left 10px
+        padding 10px 5px 5px 10px
+        &:focus
+            outline none !important
+
+
+    .btn-container
+        display flex
+        flex-direction row
+
+    .btn
+        background-color transparent
+        color primary
+        font-family 'Roboto'
+        font-size 14px
+        font-weight 600
+        text-transform uppercase
+        text-align center
+        cursor pointer
+        border 1px solid transparent
+        padding 7px 12px
+        margin-left 10px
+        height 15px
+        width 70px
+
+    .primary
+        border 2px solid primary
+        &:hover
+            background-color primary
+            color #FFF
+
+    .secondary
+        color default
+        width 50px
+        height 16px
+        &:hover
+            color #090C0F
 </style>

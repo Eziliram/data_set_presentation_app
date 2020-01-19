@@ -39,6 +39,7 @@
 - http://stylus-lang.com/
 - https://css-tricks.com/snippets/css/a-guide-to-flexbox/
 - https://material.io/resources/icons/?style=baseline
+- https://fonts.google.com/
 
 # Issues
 - Reading data?

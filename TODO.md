@@ -22,7 +22,7 @@ As a user running the application:
 
 #STYLING
 1.[DONE] Layout of app
-2. Header component including search and filter functionality
+2.[DONE] Header component including search and filter functionality
 3. Collections manager
 4. Table styling
 
