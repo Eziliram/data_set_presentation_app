@@ -65,8 +65,7 @@
                 <div id="table_header" class="data-row">
                     <div>
                         <label>
-                            <!-- TODO: implement select all -->
-                            <input v-if="!isCollection" id="select_all" type="checkbox"/>
+                            <input v-if="!isCollection" id="chk_select_all" type="checkbox" @change="selectAll()"/>
                         </label>
                     </div>
 
@@ -555,6 +554,11 @@
                 this.currentPage = 0;
                 this.isCollection = isCollection;
             },
+            selectAll() {
+                this.selectedRecords = document.getElementById('chk_select_all').checked
+                    ? this.isResult ? this.results : this.users
+                    : [];
+            },
             checked(user) {
                 return this.selectedRecords.find(record => { return record.id === user.id }) !== undefined;
             },
@@ -600,12 +604,14 @@
 
                 this.selectedRecords.forEach(selectedRecord => {
                     const result = this.collections[collectionIndex].records.find(record => { return selectedRecord.id === record.id; });
-                    if (result === undefined) this.collections[collectionIndex].records.push(selectedRecord);
-                    else alert('Item already in collection'); // todo: handle this better?
+                    if (result === undefined) {
+                        this.collections[collectionIndex].records.push(selectedRecord);
+                        this.isNewCollection = null;
+                        this.clearCheckboxes();
+                    } else {
+                        alert('Item already exists in collection.');
+                    }
                 });
-
-                this.clearCheckboxes();
-                this.isNewCollection = null;
             },
             viewCollection(collection) {
                 this.selectedRecords = [];
@@ -776,9 +782,9 @@
             &:first-child
                 width 40px
             &:nth-child(2) // ID
-                width 100px
+                width 70px
             &:nth-child(3) // User
-                width 200px
+                width 150px
             &:nth-child(4) // Attribute
                 width 1200px
 

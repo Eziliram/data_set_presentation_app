@@ -26,10 +26,14 @@ As a user running the application:
 3.[DONE] Collections manager
 4.[DONE] Add to new or add to existing collection feature, drawer like feature for collections
 5.[DONE] Table styling
-6. Select all, total records
+6.[DONE] Select all
 7. Fix edit user text field
 8. Add Collection feature on collection manager
+
 last. move out all components, scripts and styling
+
+Extras:
+1. Display total records
 
 # Notes
 
