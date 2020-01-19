@@ -27,6 +27,7 @@ As a user running the application:
 
 1. Search: not working correctly if searching by e.g. 'user 1'
 2. Clicking somewhere on the user field causes focus, not correctly focusing out afterwards
+3. When refreshing, all data is lost, add a check when page is refreshed
 
 # EXTRAS
 
