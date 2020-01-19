@@ -20,6 +20,12 @@ As a user running the application:
 
 9.[DONE] I want to sort user records by name, whether in a filter or a collection or not.
 
+#STYLING
+1.[DONE] Layout of app
+2. Header component including search and filter functionality
+3. Collections manager
+4. Table styling
+
 # Notes
 
 1.  - How many records to display at a time

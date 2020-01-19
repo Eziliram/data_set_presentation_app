@@ -13,6 +13,9 @@
 ### Answers to the following questions:
 
 - How long did you spend on the task?
+    - Functionality: 1.5 days
+    - Styling and UX:
+    - Documentation:
 - What would you add to your solution if you had more time? If you did not spend much time on the coding test then use this as an opportunity to explain what you would add.
 
 ## Notes
@@ -28,7 +31,12 @@
 - Bonus points for implementing any extra features applicable to this problem i.e. surprise us!
 
 # References
-- https://api.jquery.com/
+- https://yarnpkg.com/en/docs
+- https://vuejs.org/v2/api/
+- https://cli.vuejs.org/
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript
+- https://api.jquery.com/ (?)
+- http://stylus-lang.com/
 - https://css-tricks.com/snippets/css/a-guide-to-flexbox/
 - https://material.io/resources/icons/?style=baseline
 
@@ -37,4 +45,5 @@
 - Get user vroots
 - working with the ids of the checkboxes of the selected records to be saved into a collection, states of checked and unchecked for a specific user
 
+## If you had more time
 -if had more time, better pagination for data table
