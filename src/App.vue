@@ -698,7 +698,7 @@
                     line-height 50px
                     padding-left 10px
                 #data_container
-                    height calc(100vh - 170px)
+                    height calc(100vh - 190px) //todo: fix this
                     border-top 1px solid default
                     border-bottom 1px solid default
                     overflow-y scroll
