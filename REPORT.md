@@ -14,8 +14,9 @@
 
 - How long did you spend on the task?
     - Functionality: 1.5 days
-    - Styling and UX:
+    - Styling and UX: 1 day
     - Documentation:
+    - Optimisation: 
 - What would you add to your solution if you had more time? If you did not spend much time on the coding test then use this as an opportunity to explain what you would add.
 
 ## Notes
@@ -46,5 +47,5 @@
 - Get user vroots
 - working with the ids of the checkboxes of the selected records to be saved into a collection, states of checked and unchecked for a specific user
 
-## If you had more time
--if had more time, better pagination for data table
+## If I had more time, I would have:
+- implemented field validations and error messages
