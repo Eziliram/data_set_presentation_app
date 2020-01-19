@@ -62,13 +62,6 @@
                             : 'other' }}
                 </div>
 
-                <div class="pagination top">
-                    <span class="btn" @click="backToStart()">Back to start</span>
-                    <span class="btn" @click="previous()">Previous</span>
-                    <span class="btn" @click="next()">Next</span>
-                    <span class="btn" @click="goToEnd()">Go to end</span>
-                </div>
-
                 <div id="table_header" class="data-row">
                     <div>
                         <label>
@@ -120,10 +113,12 @@
             </div>
 
             <div class="pagination">
-                <span class="btn" @click="backToStart()">Back to start</span>
-                <span class="btn" @click="previous()">Previous</span>
+                <span class="btn" @click="backToStart()">First</span>
+                <span class="btn" @click="previous()">Prev</span>
                 <span class="btn" @click="next()">Next</span>
-                <span class="btn" @click="goToEnd()">Go to end</span>
+                <span class="btn" @click="goToEnd()">Last</span>
+
+                <span id="total_records">Total records: {{ totalRecords }}</span>
             </div>
 
             <div id="add_modify_collection" v-if="selectedRecords.length !== 0">
@@ -181,6 +176,8 @@
 
         data: () => {
             return {
+                totalRecords: 0,
+
                 ascending: true, // By default ascending
 
                 currentCollectionFocus: null,
@@ -327,6 +324,8 @@
                         ? this.collection
                         : this.users;
 
+                this.totalRecords = records.length;
+
                 return records.slice(this.currentPage, this.currentPage + this.numberOfRecordsPerPage);
             },
             sortIcon() {
@@ -437,12 +436,20 @@
                 if (this.currentPage !== 0) this.currentPage -= parseInt(this.numberOfRecordsPerPage);
             },
             next() {
-                const records = this.isResult ? this.results : this.users;
+                const records = this.isResult
+                    ? this.results
+                    : this.isCollection
+                        ? this.collection
+                        : this.users;
                 if (records.length <= (this.currentPage + parseInt(this.numberOfRecordsPerPage))) return;
                 this.currentPage += parseInt(this.numberOfRecordsPerPage);
             },
             goToEnd() {
-                const records = this.isResult ? this.results : this.users;
+                const records = this.isResult
+                    ? this.results
+                    : this.isCollection
+                        ? this.collection
+                        : this.users;
                 if (records.length <= parseInt(this.numberOfRecordsPerPage)) return;
                 this.currentPage = records.length - 1;
             },
@@ -549,7 +556,7 @@
             },
             clearCheckboxes() {
                 this.selectedRecords = []; // Clears selected items
-                document.getElementById('chk_select_all').checked = false;
+                if (document.getElementById('chk_select_all') !== null) document.getElementById('chk_select_all').checked = false;
             },
             toggleResults(isResult = true) {
                 this.results = [];
@@ -621,10 +628,13 @@
                 });
             },
             viewCollection(collection) {
+                this.toggleResults(false);
+                this.clearSearch();
+                this.clearFilter();
                 this.selectedRecords = [];
+                this.toggleCollection();
                 this.selectedCollection = collection.id;
                 this.tableTitle = collection.name;
-                this.toggleCollection();
                 collection.records.forEach(record => this.collection.push(record));
             },
             deleteCollection(selectedCollection) {
@@ -665,12 +675,12 @@
         flex-direction row
         #collections_container
             border-right 2px solid default
-            width 15%
+            width 20%
             max-height 100%
             #collections_manager-title
                 background-color default
                 color #FFF
-                font-size 18px
+                font-size 15px
                 font-weight 500
                 text-transform uppercase
                 text-align center
@@ -710,7 +720,7 @@
                 p
                     padding-left 10px
         #dashboard
-            width 85%
+            width 80%
             #query_container
                 position fixed
                 width 100%
@@ -758,7 +768,7 @@
                         background-color transparent
                         cursor initial
                 #data_container
-                    height calc(100vh - 219px)
+                    height calc(100vh - 205px)
                     border-bottom 2px solid primary
                     overflow-y scroll
                     p
@@ -813,6 +823,7 @@
 
     input[type=text]
     select
+        cursor pointer
         font-size 14px
         border none
         border-bottom 2px solid primary
@@ -841,6 +852,7 @@
         margin-left 10px
         height 15px
         width 70px
+        user-select none
 
     .primary
         border 2px solid primary
@@ -856,12 +868,14 @@
             color #090C0F
 
     .pagination
-        height 20px
-        line-height 20px
+        height 30px
+        line-height 30px
         text-align center
         border-bottom 2px solid primary
         span
-            padding 2px 15px !important
+            height 20px !important
+            padding-left 20px !important
+            padding-right 20px !important
             margin-left 0 !important
             border-right 2px solid primary
             &:first-child
@@ -869,11 +883,12 @@
             &:hover
                 background-color primary
                 color #FFF
-    .top
-        border-top 2px solid primary
-
-    .m-0
-        margin 0
+        #total_records
+            color primary
+            border none !important
+            &:hover
+                background-color transparent
+                color primary
 
     .mr-5
         margin-right 5px
