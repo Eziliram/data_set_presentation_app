@@ -804,6 +804,10 @@
                 width 150px
             &:nth-child(4) // Attribute
                 width 1200px
+            .delete
+                height 20px
+                &:hover
+                    cursor pointer
 
     .show-collection-drawer
         height calc(100vh - 295px) !important
