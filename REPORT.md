@@ -101,6 +101,7 @@ TOTAL: [x] days
 - implemented a feature to hide/show the Collections Manager to allow for more space on the dashboard to view the records
 - persisted the state (if the page is refreshed, all data will be reset back to their defaults)
 - moved sections out to their own components
+- disabled pagination buttons according to the state of the current list
 
 ## References
 

@@ -1,9 +1,9 @@
 # TO DO
 
-1. Move out all components, scripts and styling
-2. Complete all TODOs
-3. Optimise functions
-4. Ensure there are sufficient comments
+1. [DONE] Move out all components, scripts and styling
+2. Complete all TODOs [1 LEFT]
+3. [DONE] Optimise functions
+4. [DONE] Ensure there are sufficient comments
 5. [N/A] Set up some test cases
 
 

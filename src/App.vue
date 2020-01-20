@@ -8,12 +8,12 @@
                 <div v-for="(collection, index) in collections"
                      class="collection"
                      :class="{ 'selected-collection': selectedCollection === collection.id }"
-                     @mouseover="setCurrentCollectionFocus(index)"
-                     @mouseleave="currentCollectionFocus = null">
+                     @mouseover="selectedCollectionFocus = index"
+                     @mouseleave="selectedCollectionFocus = null">
                     <div @click="viewCollection(collection)">{{ collection.name }}</div>
 
                     <div>
-                        <img v-if="currentCollectionFocus === index"
+                        <img v-if="selectedCollectionFocus === index"
                              class="delete"
                              src="./assets/images/delete.svg"
                              @click="deleteCollection(collection)"
@@ -82,7 +82,7 @@
 
                     <div class="data-row-user">
                         <div>NAME</div>
-                        <img id="sort" :src="iconSort" @click="sort()" alt="Sort">
+                        <img id="sort" :src="iconSortOrder" @click="sort()" alt="Sort">
                     </div>
 
                     <div>ATTRIBUTES</div>
@@ -105,7 +105,7 @@
 
                         <div>{{ user.id }}</div>
 
-                        <div @mousedown="editUser(index)" @mouseup="focusEditUser(index)">
+                        <div @mousedown="editUser(index)" @mouseup="setEditUserFocus(index)">
                             <span v-show="selectedUserIndex !== index">{{ user.name }}</span>
 
                             <label>
@@ -198,71 +198,58 @@
         data: () => {
             return {
                 totalRecords: 0,
+                numberOfRecordsPerPage: 100,
+                currentPage: 0,
 
                 ascending: true, // By default ascending
 
-                currentCollectionFocus: null,
-                selectedCollection: null,
                 tableTitle: null,
-                isCollection: false,
-                collection: [],
-                collections: [],
-
-                isResult: false,
-                results: [],
-
-                selectedRecords: [],
-                selectedUserIndex: null,
-                isNewCollection: null,
-
-                currentPage: 0,
-                numberOfRecordsPerPage: 100,
 
                 attributes: [],
+
                 users: [],
-                attributeIds: []
+                attributeIds: [],
+
+                isNewCollection: null, // Shows/hides 'Add New Or Add To Existing Collection' component
+                selectedCollection: null, // Set active class for the selected collection
+                selectedCollectionFocus: null, // Show/hide 'delete' function for the collection currently hovered over
+
+                isCollection: false, // True if a user is viewing results from a collection
+                collections: [], // Contains all saved collection
+                collection: [], // Contains the content of the selected collection
+
+                isResult: false, // True if a user is viewing results from a Search or Filter
+                results: [], // Contains the results of a Search or Filter
+
+                selectedRecords: [],
+
+                selectedUserIndex: null // Index of the user selected to edit name
             }
         },
 
         mounted() {
-
             this.processData();
             // The state is not persisted, therefore stop the user before the page is refreshed to keep changes that were made.
             window.onbeforeunload = () => { return 'Changes you made may not be saved.' };
         },
 
         computed: {
-            // The records that are currently displayed on the screen
             displayedRecords() {
-
-                let records = this.isResult
-                    ? this.results
-                    : this.isCollection
-                        ? this.collection
-                        : this.users;
-
+                let records = this.getRecords();
                 this.totalRecords = records.length;
-
+                // Get the first 100 records
                 return records.slice(this.currentPage, this.currentPage + this.numberOfRecordsPerPage);
             },
-            iconSort() {
+            // Return up or down arrow image based on the state of the current sort order
+            iconSortOrder() {
                 return this.ascending ? require('./assets/images/up.svg') : require('./assets/images/down.svg');
             }
         },
 
         methods: {
-            editUser(index) {
-                this.selectedUserIndex = index;
-            },
-            focusEditUser(index) {
-                document.getElementById('txt_' + index).focus();
-            },
-            setCurrentCollectionFocus(index) {
-                this.currentCollectionFocus = index;
-            },
             //<editor-fold desc="Data Processing">
             /**
-             *
+             * Gets the data from the data file and process it into a defined structure.
              */
             async processData() {
                 // Get the data from the data file
@@ -270,7 +257,7 @@
 
                     let dataLines = data.split('\n');
 
-                    // Process Attributes and User data
+                    // Process Attributes (vroots) and User data (Case and vote lines)
                     dataLines.forEach(dataLine => {
 
                         let dataLineArray = dataLine.split(',');
@@ -290,6 +277,7 @@
                                 this.setAttributeIdForUser(dataLineArray);
                                 break;
                             case '': // End of file
+                                // Assign the last batch of attributes for the last user added
                                 this.setAttributesForUser();
                                 break;
                             default:
@@ -299,7 +287,7 @@
                 });
             },
             /**
-             *
+             * Construct an object containing an attribute's data
              * @param data
              * @returns {{id: *, title: *, url: *}}
              */
@@ -317,7 +305,7 @@
                 };
             },
             /**
-             * Constructs an object containing a user's data
+             * Constructs an object containing a user's data.
              * @param data
              * @returns {{name: *, id: *}}
              */
@@ -335,22 +323,176 @@
                 }
             },
             /**
-             * Compiles the group of attributes related to a user
+             * Compiles the group of attributes related to a user.
              * @param data
              */
             setAttributeIdForUser(data) {
                 this.attributeIds.push(data[1])
             },
             /**
-             *
+             * Sets the attribute IDs related to the last user that was added.
              */
             setAttributesForUser() {
                 this.users[this.users.length - 1].attributeIds = this.attributeIds;
             },
             //</editor-fold>
 
+            //<editor-fold desc="Search & Filter">
+            /**
+             * Resets all relevant fields and the table to it's initial state.
+             */
+            reset() {
+
+                this.currentPage = 0;
+                this.tableTitle = null;
+
+                this.clearSearch();
+                this.clearFilter();
+                this.clearCheckboxes();
+
+                this.selectedCollection = null;
+                this.toggleCollection(false);
+
+                if (!this.ascending) this.sort(); // Sorts table contents to it's default order
+            },
+            /**
+             * Display all records that match the search criteria.
+             */
+            search() {
+
+                // Reset view
+                this.clearFilter();
+                this.clearCollection();
+
+                const searchValue = document.getElementById('txt_search').value;
+                const searchValueRegex = ''.replace(new RegExp('', 'g'), searchValue);
+
+                this.tableTitle = searchValue;
+
+                // Filter all records that match the search value
+                let searchResults = this.users.filter(user => {
+
+                    // Return users that match the search value
+                    if (user.name.match(searchValue) !== null) return user.name.match(searchValue);
+
+                    // Return attributes that match the search value
+                    let attributeResults = user.attributeIds.filter(id => {
+                        return this.mapAttributeId(id).toLowerCase().match(searchValueRegex.toLowerCase())
+                    });
+
+                    if (attributeResults.length !== 0) return user; //todo: is this needed? users are already returned as well as attributes
+                });
+
+                this.toggleResults(); // Enable result view
+                searchResults.forEach(result => this.results.push(result));
+            },
+            /*
+            * Clears Search related fields.
+            */
+            clearSearch() {
+                this.toggleResults(false);
+                document.getElementById('txt_search').value = '';
+            },
+            /**
+             * Display all records that contains the selected filter.
+             */
+            applyFilter() {
+
+                // Reset view
+                this.clearSearch();
+                this.clearCollection();
+
+                const filter = document.getElementById('drp_filter');
+                let filteredResults = [];
+
+                this.tableTitle = filter.options[filter.selectedIndex].text;
+
+                this.users.forEach(user => {
+                    let result = user.attributeIds.filter(attr => { return attr === filter.value });
+                    if (result.length !== 0) filteredResults.push(user);
+                });
+
+                this.toggleResults(); // Enable result view
+                filteredResults.forEach(result => this.results.push(result));
+            },
+            /**
+             * Clears Filter related fields.
+             */
+            clearFilter() {
+                this.toggleResults(false);
+                document.getElementById('drp_filter').value = '';
+            },
+            //</editor-fold>
+
+            //<editor-fold desc="Data Table">
+            /**
+             * Sorts the displayed records by the user name field.
+             */
+            sort() {
+
+                let records = this.getRecords();
+                this.ascending = !this.ascending;
+
+                records.sort((a, b) => {
+                    if (this.ascending ? a.name < b.name : a.name > b.name) return -1;
+                    if (this.ascending ? a.name > b.name : a.name < b.name) return 2;
+                    return 0;
+                });
+            },
+            /**
+             * Sets the index of the selected record to enable the user to edit a user's name field.
+             */
+            editUser(index) {
+                this.selectedUserIndex = index;
+            },
+            /**
+             * Forces focus to the selected user field.
+             */
+            setEditUserFocus(index) {
+                document.getElementById('txt_' + index).focus();
+            },
+            /**
+             * Selects all records from the current list.
+             */
+            selectAll() {
+                this.selectedRecords = document.getElementById('chk_select_all').checked
+                    ? this.isResult ? this.results : this.users
+                    : [];
+            },
+            /**
+             * Binds the checkbox state to it's records.
+             */
+            checked(user) {
+                return this.selectedRecords.find(record => { return record.id === user.id }) !== undefined;
+            },
+            /**
+             * Add/removes the record that was selected/deselected to/from the list of selected records.
+             */
+            setSelectedRecord(user) {
+                document.getElementById('chk_' + user.id).checked
+                    ? this.selectedRecords.push(user) // Adds record
+                    : this.selectedRecords.find((record, index) => {
+                        if (record && record.id === user.id) this.selectedRecords.splice(index, 1); // Removes record
+                    });
+            },
+            /**
+             * Clears all checkboxes
+             */
+            clearCheckboxes() {
+                this.selectedRecords = []; // Clears selected items
+                if (document.getElementById('chk_select_all') !== null) document.getElementById('chk_select_all').checked = false;
+            },
+            /**
+             * Enables/disables 'Result' view
+             */
+            toggleResults(isResult = true) {
+                this.results = [];
+                this.currentPage = 0;
+                this.isResult = isResult;
+            },
+            //</editor-fold>
+
             //<editor-fold desc="Pagination">
-            //TODO: if user goes beyond next or more back than back, disable buttons
             backToStart() {
                 this.currentPage = 0;
             },
@@ -358,227 +500,147 @@
                 if (this.currentPage !== 0) this.currentPage -= parseInt(this.numberOfRecordsPerPage);
             },
             next() {
-                const records = this.isResult
-                    ? this.results
-                    : this.isCollection
-                        ? this.collection
-                        : this.users;
+                const records = this.getRecords();
+                // Do not execute if there are no further records to view
                 if (records.length <= (this.currentPage + parseInt(this.numberOfRecordsPerPage))) return;
                 this.currentPage += parseInt(this.numberOfRecordsPerPage);
             },
             goToEnd() {
-                const records = this.isResult
-                    ? this.results
-                    : this.isCollection
-                        ? this.collection
-                        : this.users;
+                const records = this.getRecords();
+                // Do not execute if there are less than 100 records
                 if (records.length <= parseInt(this.numberOfRecordsPerPage)) return;
                 this.currentPage = records.length - 1;
             },
             //</editor-fold>
 
-            //<editor-fold desc="Table Features">
+            //<editor-fold desc="Collections Manager">
             /**
-             *
-             * @param id
-             * @returns {T | string | *}
-             */
-            mapAttributeId(id) {
-                return this.attributes.find(attribute => {
-                    if (attribute.id === id) return attribute.title
-                }).title;
-            },
-            reset() {
-                this.currentPage = 0;
-                this.clearSearch();
-                this.clearFilter();
-                this.clearCheckboxes();
-                this.toggleCollection(false);
-                this.selectedCollection = null;
-                this.tableTitle = null;
-                if (!this.ascending) this.sort();
-            },
-            /**
-             *
-             */
-            sort() {
-                this.ascending = !this.ascending;
-
-                let records = this.isResult
-                    ? this.results
-                    : this.isCollection
-                        ? this.collection
-                        : this.users;
-
-                records.sort((a, b) => {
-                    if (this.ascending ? a.name < b.name : a.name > b.name) return -1;
-                    if (this.ascending ? a.name > b.name : a.name < b.name) return 2;
-                    return 0;
-                })
-            },
-            /**
-             *
-             */
-            search() {
-
-                this.clearFilter();
-                //todo: add to clearSomething
-                this.toggleCollection(false);
-                this.selectedCollection = null;
-                this.selectedRecords = [];
-
-                const searchValue = document.getElementById('txt_search').value;
-                const regex = ''.replace(new RegExp('', 'g'), searchValue);
-
-                this.tableTitle = searchValue;
-                let searchResults = this.users.filter(user => {
-                    if (user.name.match(searchValue) !== null) return user.name.match(searchValue);
-                    let attributeResults = user.attributeIds.filter(id => {
-                        return this.mapAttributeId(id).toLowerCase().match(regex.toLowerCase())
-                    });
-                    if (attributeResults.length !== 0) return user;
-                });
-
-                this.toggleResults();
-                searchResults.forEach(result => this.results.push(result));
-            },
-            clearSearch() {
-                this.toggleResults(false);
-                document.getElementById('txt_search').value = '';
-            },
-            /**
-             *
-             */
-            applyFilter() {
-
-                this.clearSearch();
-                //todo: add to clearSomething
-                this.toggleCollection(false);
-                this.selectedCollection = null;
-                this.selectedRecords = [];
-
-                const filter = document.getElementById('drp_filter');
-                const selectedFilterOption = filter.value;
-                let filteredResults = [];
-
-                this.tableTitle = filter.options[filter.selectedIndex].text;
-                this.toggleResults();
-                this.users.forEach(user => {
-                    let result = user.attributeIds.filter(attr => { return attr === selectedFilterOption });
-                    if (result.length !== 0) filteredResults.push(user);
-                });
-
-                filteredResults.forEach(result => this.results.push(result));
-            },
-            /**
-             *
-             */
-            clearFilter() {
-                this.toggleResults(false);
-                document.getElementById('drp_filter').value = '';
-            },
-            clearCheckboxes() {
-                this.selectedRecords = []; // Clears selected items
-                if (document.getElementById('chk_select_all') !== null) document.getElementById('chk_select_all').checked = false;
-            },
-            toggleResults(isResult = true) {
-                this.results = [];
-                this.currentPage = 0;
-                this.isResult = isResult;
-            },
-            toggleCollection(isCollection = true) {
-                this.collection = [];
-                this.currentPage = 0;
-                this.isCollection = isCollection;
-            },
-            selectAll() {
-                this.selectedRecords = document.getElementById('chk_select_all').checked
-                    ? this.isResult ? this.results : this.users
-                    : [];
-            },
-            checked(user) {
-                return this.selectedRecords.find(record => { return record.id === user.id }) !== undefined;
-            },
-            /**
-             * Add/removes the record that was selected/deselected to/from an array
-             * todo: rename function name
-             */
-            setSelectedRecord(user) {
-                document.getElementById('chk_' + user.id).checked
-                    ? this.selectedRecords.push(user)
-                    : this.selectedRecords.find((record, index) => {
-                        if (record && record.id === user.id) this.selectedRecords.splice(index, 1);
-                    });
-            },
-            deleteRecord(userIndex) {
-
-                let collectionIndex = this.findCollectionIndex();
-
-                this.collections[collectionIndex].records.find((record, index) => {
-                    if (index === userIndex) this.collections[collectionIndex].records.splice(index, 1); // Delete record
-                });
-
-                this.collection = this.collections[collectionIndex].records; // Display updated records
-            },
-            /**
-             *
+             * Adds selected records to a new collection.
              */
             addToNewCollection() {
 
                 const name = document.getElementById('txt_collection_name').value;
 
+                // Use Date.now() to set a unique ID for the collection
                 this.collections.push({ id: Date.now(), name, records: this.selectedRecords });
-                this.clearCheckboxes();
-                this.isNewCollection = null;
-                document.getElementById('txt_collection_name').value = '';
+                document.getElementById('txt_collection_name').value = ''; // Empty collection name field
+                this.closeCollectionDrawer();
             },
             /**
-             *
+             * Adds selected records to a specified collection.
              */
             addToExistingCollection() {
 
                 let collectionIndex = document.getElementById('drp_collections').value;
 
                 this.selectedRecords.forEach(selectedRecord => {
+
                     const result = this.collections[collectionIndex].records.find(record => { return selectedRecord.id === record.id; });
+
                     if (result === undefined) {
                         this.collections[collectionIndex].records.push(selectedRecord);
-                        this.isNewCollection = null;
-                        this.clearCheckboxes();
+                        this.closeCollectionDrawer();
                     } else {
                         alert('Item already exists in collection.');
                     }
                 });
             },
+            /**
+             * Displays the records of the selected collection.
+             */
             viewCollection(collection) {
-                this.toggleResults(false);
+
+                this.tableTitle = collection.name;
+                this.selectedCollection = collection.id;
+                this.selectedRecords = []; // Clear any selected item
+
+                // Reset Search and Filter
                 this.clearSearch();
                 this.clearFilter();
-                this.selectedRecords = [];
-                this.toggleCollection();
-                this.selectedCollection = collection.id;
-                this.tableTitle = collection.name;
+
+                this.toggleResults(false); // Disable 'Results' view
+                this.toggleCollection(); // Enable 'Collection' view
+
                 collection.records.forEach(record => this.collection.push(record));
             },
+            /**
+             * Deletes a record from a selected collection.
+             */
+            deleteRecord(recordIndex) {
+
+                // Return the index of the selected collection
+                let collectionIndex = this.collections.findIndex(collection => {
+                    return collection.id === this.selectedCollection;
+                });
+
+                this.collections[collectionIndex].records.find((record, index) => {
+                    if (index === recordIndex) this.collections[collectionIndex].records.splice(index, 1); // Delete record
+                });
+
+                this.collection = this.collections[collectionIndex].records; // Display updated records
+            },
+            /**
+             * Deletes the specified collection.
+             */
             deleteCollection(selectedCollection) {
-                this.reset();
+
+                this.reset(); // Reset view
+
                 this.collections.find((collection, index) => {
                     if (selectedCollection.id === collection.id) this.collections.splice(index, 1); // Delete collection
-                })
+                });
+            },
+            /**
+             * Close the 'drawer' where the 'Add New Or Add To Existing Collection' component lies.
+             */
+            closeCollectionDrawer() {
+                this.isNewCollection = null;
+                this.clearCheckboxes();
+            },
+            /**
+             * Clears components related to collection.
+             */
+            clearCollection() {
+                this.toggleCollection(false);
+                this.selectedCollection = null;
+                this.selectedRecords = [];
+            },
+            /**
+             * Enables/disables 'Collection' view.
+             */
+            toggleCollection(isCollection = true) {
+                this.collection = [];
+                this.currentPage = 0;
+                this.isCollection = isCollection;
             },
             //</editor-fold>
 
-            //<editor-fold desc="Utility Functions">
-            //todo: this function is only used in one place?
-            findCollectionIndex() {
-                return this.collections.findIndex(collection => {
-                    return collection.id === this.selectedCollection;
-                });
+            /**
+             * Returns the records related the the current view.
+             */
+            getRecords() {
+                return this.isResult
+                    ? this.results
+                    : this.isCollection
+                        ? this.collection
+                        : this.users;
             },
+            /**
+             * Maps the attribute ID to the attribute title.
+             * @param id
+             * @returns string
+             */
+            mapAttributeId(id) {
+                return this.attributes.find(attribute => { if (attribute.id === id) return attribute.title }).title;
+            },
+            /**
+             * Function to clean the string value.
+             * @param value
+             * @returns string
+             */
             cleanString(value) {
                 return value.replace(/"/g, '');
             }
-            //</editor-fold>
         }
     }
 </script>
