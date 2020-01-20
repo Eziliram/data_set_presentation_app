@@ -1,8 +1,4 @@
-# To Do
-
-1. Search: not working correctly if searching by e.g. 'user 1'
-2. Clicking somewhere on the user field causes focus, not correctly focusing out afterwards
-3. When refreshing, all data is lost, add a check when page is refreshed
+# TO DO
 
 1. Move out all components, scripts and styling
 2. Complete all TODOs
@@ -32,7 +28,11 @@ As a user running the application:
 7. [DONE] Fix edit user text field
 8. [DONE] Styling for pagination
 
+1. [DONE] Search: not working correctly if searching by e.g. 'user 1'
+2. [CANNOT REPLICATE] Clicking somewhere on the user field causes focus, not correctly focusing out afterwards
+3. [DONE] When refreshing, all data is lost, add a check when page is refreshed
+
 # EXTRAS
 
-1.[DONE]  Display total records
+1. [DONE]  Display total records
 2. Add Collection feature on collection manager (?)

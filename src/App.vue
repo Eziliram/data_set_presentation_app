@@ -175,10 +175,6 @@
     export default {
         name: 'App',
 
-        mounted() {
-            this.processData();
-        },
-
         data: () => {
             return {
                 totalRecords: 0,
@@ -206,6 +202,13 @@
                 users: [],
                 attributeIds: []
             }
+        },
+
+        mounted() {
+
+            this.processData();
+            // The state is not persisted, therefore stop the user before the page is refreshed to keep changes that were made.
+            window.onbeforeunload = () => { return 'Changes you made may not be saved.' };
         },
 
         computed: {
@@ -405,12 +408,13 @@
                 this.selectedRecords = [];
 
                 const searchValue = document.getElementById('txt_search').value;
+                const regex = ''.replace(new RegExp('', 'g'), searchValue);
 
                 this.tableTitle = searchValue;
                 let searchResults = this.users.filter(user => {
                     if (user.name.match(searchValue) !== null) return user.name.match(searchValue);
                     let attributeResults = user.attributeIds.filter(id => {
-                        return this.mapAttributeId(id).toLowerCase().match(searchValue.toLowerCase())
+                        return this.mapAttributeId(id).toLowerCase().match(regex.toLowerCase())
                     });
                     if (attributeResults.length !== 0) return user;
                 });

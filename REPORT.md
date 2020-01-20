@@ -9,7 +9,7 @@ The user interface consists of the following components:
 
 All components are fixed on the screen, except for the table component.
 
-The table component displays a 100 user records at a time where the user is able to scroll down to view records. The 
+The table component displays 100 user records at a time where the user is able to scroll down to view records. The 
 pagination is fixed at the bottom of the table which, if there are more than 100 records, allows the user to browse 
 through the remainder of records.
 
@@ -99,6 +99,7 @@ TOTAL: [x] days
 - implemented field validations and error messages
 - added an additional component to view the details of the Attributes, e.g. IDs and URLs
 - implemented a feature to hide/show the Collections Manager to allow for more space on the dashboard to view the records
+- persisted the state (if the page is refreshed, all data will be reset back to their defaults)
 
 ## References
 
