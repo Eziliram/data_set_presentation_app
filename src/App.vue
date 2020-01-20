@@ -477,17 +477,19 @@
              */
             setSelectedRecord(user) {
 
-                // TODO: FIX THIS
                 let selectedRecords = this.selectedRecords;
 
                 document.getElementById('chk_' + user.id).checked
-                    ? this.selectedRecords.push(user) // Adds record
+                    ? selectedRecords.push(user) // Adds record
                     :
 
                     selectedRecords.find((record, index) => {
+                        // Removes record
                         if (record && record.id === user.id) {
-
-                            selectedRecords.splice(index, 1);} // Removes record
+                            console.log('---')
+                            // TODO: FIX THIS
+                            // selectedRecords.splice(index, 1);
+                        }
                     });
             },
             /**
