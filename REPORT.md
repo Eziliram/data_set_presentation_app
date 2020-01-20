@@ -90,9 +90,9 @@ example is the 'delete' styling and functionality for Collections.
 - Functionality: 1.5 days
 - Styling and UX: 1 day
 - Documentation: 0.5 day
-- Testing and optimisation: 
+- Testing and optimisation: 1 day
 
-TOTAL: [x] days
+TOTAL: 4 days
 
 ## If I had more time, I would have:
 

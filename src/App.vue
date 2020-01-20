@@ -384,7 +384,7 @@
                         return this.mapAttributeId(id).toLowerCase().match(searchValueRegex.toLowerCase())
                     });
 
-                    if (attributeResults.length !== 0) return user; //todo: is this needed? users are already returned as well as attributes
+                    if (attributeResults.length !== 0) return user;
                 });
 
                 this.toggleResults(); // Enable result view
