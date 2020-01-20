@@ -235,7 +235,9 @@
 
         computed: {
             displayedRecords() {
+
                 let records = this.getRecords();
+
                 this.totalRecords = records.length;
                 // Get the first 100 records
                 return records.slice(this.currentPage, this.currentPage + this.numberOfRecordsPerPage);
