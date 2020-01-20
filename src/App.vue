@@ -156,8 +156,8 @@
                             <input id="txt_collection_name" type="text" placeholder="Collection name"/>
                         </label>
 
-                        <span id="btn_create_new_collection" class="btn primary" @click="addToNewCollection()">Add</span>
-                        <span class="btn secondary" @click="isNewCollection = null">Cancel</span>
+                        <span id="btn_create_new_collection" class="btn primary add" @click="addToNewCollection()">Add</span>
+                        <span class="btn secondary clear" @click="isNewCollection = null">Cancel</span>
                     </template>
                     <!--</editor-fold>-->
 
@@ -172,8 +172,8 @@
                                 </select>
                             </label>
 
-                            <span class="btn primary" @click="addToExistingCollection()">Add</span>
-                            <span class="btn secondary" @click="isNewCollection = null">Cancel</span>
+                            <span class="btn primary add" @click="addToExistingCollection()">Add</span>
+                            <span class="btn secondary clear" @click="isNewCollection = null">Cancel</span>
                         </template>
 
                         <template v-else>
@@ -462,16 +462,19 @@
              *
              */
             allChecked() {
+                if (this.selectedRecords.length === 0) return false;
                 return this.selectedRecords.length === this.totalRecords;
             },
             /**
              * Selects all records from the current list.
              */
             selectAll() {
-                console.log(this.isResult ? this.results : this.users)
-                // this.selectedRecords = document.getElementById('chk_select_all').checked
-                //     ? this.isResult ? this.results : this.users
-                //     : [];
+
+                let records = document.getElementById('chk_select_all').checked
+                    ? this.isResult ? JSON.stringify(this.results) : JSON.stringify(this.users)
+                    : [];
+
+                records.length !== 0 ? this.selectedRecords = JSON.parse(records) : [];
             },
             /**
              * Binds the checkbox state to it's records.
@@ -603,7 +606,7 @@
                 this.reset(); // Reset view
 
                 this.collections.find((collection, index) => {
-                    if (selectedCollection.id === collection.id) this.collections.splice(index, 1); // Delete collection
+                    if (selectedCollection && selectedCollection.id === collection.id) this.collections.splice(index, 1); // Delete collection
                 });
             },
             /**
