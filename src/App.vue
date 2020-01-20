@@ -369,6 +369,8 @@
                 const searchValue = document.getElementById('txt_search').value;
                 const searchValueRegex = ''.replace(new RegExp('', 'g'), searchValue);
 
+                if (searchValue === '') return alert('Enter a search value.');
+
                 this.tableTitle = searchValue;
 
                 // Filter all records that match the search value
@@ -405,9 +407,12 @@
                 this.clearCollection();
 
                 const filter = document.getElementById('drp_filter');
+                const selectedFilter = filter.options[filter.selectedIndex].text;
                 let filteredResults = [];
 
-                this.tableTitle = filter.options[filter.selectedIndex].text;
+                if (selectedFilter === 'Select filter') return alert('Select a filter option.');
+
+                this.tableTitle = selectedFilter;
 
                 this.users.forEach(user => {
                     let result = user.attributeIds.filter(attr => { return attr === filter.value });
@@ -471,10 +476,18 @@
              * Add/removes the record that was selected/deselected to/from the list of selected records.
              */
             setSelectedRecord(user) {
+
+                // TODO: FIX THIS
+                let selectedRecords = this.selectedRecords;
+
                 document.getElementById('chk_' + user.id).checked
                     ? this.selectedRecords.push(user) // Adds record
-                    : this.selectedRecords.find((record, index) => {
-                        if (record && record.id === user.id) this.selectedRecords.splice(index, 1); // Removes record
+                    :
+
+                    selectedRecords.find((record, index) => {
+                        if (record && record.id === user.id) {
+
+                            selectedRecords.splice(index, 1);} // Removes record
                     });
             },
             /**
@@ -522,6 +535,8 @@
             addToNewCollection() {
 
                 const name = document.getElementById('txt_collection_name').value;
+
+                if (name === '') return alert('Enter a collection name.');
 
                 // Use Date.now() to set a unique ID for the collection
                 this.collections.push({ id: Date.now(), name, records: this.selectedRecords });
