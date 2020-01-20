@@ -30,7 +30,9 @@
         <div id="dashboard">
             <!--<editor-fold desc="Search & Filter Container">-->
             <div id="query_container">
-                <img id="reset" src="./assets/images/reset.svg" @click="reset()" alt="Reset"/>
+                <div class="btn-container">
+                    <div id="btn_view_all" class="btn primary" @click="viewAll()">View All</div>
+                </div>
 
                 <div id="search_container">
                     <label>
@@ -343,7 +345,7 @@
             /**
              * Resets all relevant fields and the table to it's initial state.
              */
-            reset() {
+            viewAll() {
 
                 this.currentPage = 0;
                 this.tableTitle = null;
@@ -377,7 +379,8 @@
                 let searchResults = this.users.filter(user => {
 
                     // Return users that match the search value
-                    if (user.name.match(searchValue) !== null) return user.name.match(searchValue);
+                    if (user.name.toLowerCase().match(searchValue.toLowerCase()) !== null)
+                        return user.name.toLowerCase().match(searchValue.toLowerCase());
 
                     // Return attributes that match the search value
                     let attributeResults = user.attributeIds.filter(id => {
@@ -601,7 +604,7 @@
              */
             deleteCollection(selectedCollection) {
 
-                this.reset(); // Reset view
+                this.viewAll(); // Reset view
 
                 this.collections.find((collection, index) => {
                     if (selectedCollection && selectedCollection.id === collection.id) this.collections.splice(index, 1); // Delete collection
