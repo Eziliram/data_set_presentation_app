@@ -74,7 +74,7 @@
                 <div id="table_header" class="data-row">
                     <div>
                         <label>
-                            <input v-if="!isCollection" id="chk_select_all" type="checkbox" @change="selectAll()"/>
+                            <input v-if="!isCollection" id="chk_select_all" type="checkbox" @change="selectAll()" :checked="allChecked()"/>
                         </label>
                     </div>
 
@@ -95,7 +95,7 @@
                          class="data-row">
                         <div v-if="!isCollection">
                             <label>
-                                <input :id="'chk_' + user.id" type="checkbox" @change="setSelectedRecord(user)" :checked="checked(user)"/>
+                                <input :id="'chk_' + user.id" type="checkbox" @change="setSelectedRecord(user)" :checked="selectedRecordChecked(user)"/>
                             </label>
                         </div>
 
@@ -459,37 +459,34 @@
                 document.getElementById('txt_' + index).focus();
             },
             /**
+             *
+             */
+            allChecked() {
+                return this.selectedRecords.length === this.totalRecords;
+            },
+            /**
              * Selects all records from the current list.
              */
             selectAll() {
-                this.selectedRecords = document.getElementById('chk_select_all').checked
-                    ? this.isResult ? this.results : this.users
-                    : [];
+                console.log(this.isResult ? this.results : this.users)
+                // this.selectedRecords = document.getElementById('chk_select_all').checked
+                //     ? this.isResult ? this.results : this.users
+                //     : [];
             },
             /**
              * Binds the checkbox state to it's records.
              */
-            checked(user) {
+            selectedRecordChecked(user) {
                 return this.selectedRecords.find(record => { return record.id === user.id }) !== undefined;
             },
             /**
              * Add/removes the record that was selected/deselected to/from the list of selected records.
              */
             setSelectedRecord(user) {
-
-                let selectedRecords = this.selectedRecords;
-
                 document.getElementById('chk_' + user.id).checked
-                    ? selectedRecords.push(user) // Adds record
-                    :
-
-                    selectedRecords.find((record, index) => {
-                        // Removes record
-                        if (record && record.id === user.id) {
-                            console.log('---')
-                            // TODO: FIX THIS
-                            // selectedRecords.splice(index, 1);
-                        }
+                    ? this.selectedRecords.push(user) // Adds record
+                    : this.selectedRecords.find((record, index) => {
+                        if (record && record.id === user.id) this.selectedRecords.splice(index, 1); // Removes record
                     });
             },
             /**
