@@ -54,7 +54,7 @@
             <div id="table_container">
                 <div id="table_title">
                     {{ tableTitle === null
-                    ? 'All records'
+                    ? 'All user records'
                     : isCollection
                         ? 'Collection: ' + tableTitle
                         : isResult
@@ -72,7 +72,7 @@
                     <div>ID</div>
 
                     <div class="data-row-user">
-                        <div>USER</div>
+                        <div>NAME</div>
                         <img id="sort" :src="sortIcon" @click="sort()" alt="Sort">
                     </div>
 
@@ -243,7 +243,6 @@
              */
             async processData() {
                 // Get the data from the data file
-                //todo: js way to get data?
                 await $.get('anonymous-msweb.data', data => {
 
                     let dataLines = data.split('\n');
@@ -661,6 +660,7 @@
                     padding-left 10px
                 #table_header
                     height 30px
+                    font-size 14px
                     font-weight 500
                     line-height 30px
                     border-bottom 2px solid primary
@@ -668,7 +668,7 @@
                         background-color transparent
                         cursor initial
                 #data_container
-                    height calc(100vh - 205px)
+                    height calc(100vh - 202px)
                     border-bottom 2px solid primary
                     overflow-y scroll
                     p
@@ -682,9 +682,10 @@
                     margin-top 10px
 
     .data-row
+        font-size 14px
         display flex
         flex-direction row
-        padding 4px 0 4px 10px
+        padding 1px 0 4px 10px
         .data-row-user
             display flex
             flex-direction row
@@ -696,7 +697,7 @@
         &:first-child
             margin-top 10px
         &:last-child
-            margin-bottom 10px
+            margin-bottom 7px
         &:hover
             cursor pointer
             background-color #F4F6F7
@@ -710,7 +711,7 @@
             &:nth-child(4) // Attribute
                 width 1200px
             .delete
-                height 20px
+                height 16px
                 &:hover
                     cursor pointer
 

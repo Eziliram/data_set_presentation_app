@@ -1,5 +1,16 @@
 # To Do
 
+1. Search: not working correctly if searching by e.g. 'user 1'
+2. Clicking somewhere on the user field causes focus, not correctly focusing out afterwards
+3. When refreshing, all data is lost, add a check when page is refreshed
+
+1. Move out all components, scripts and styling
+2. Complete all TODOs
+3. Optimise functions
+4. Ensure there are sufficient comments
+5. Set up some test cases
+
+
 As a user running the application:
 
 1. [DONE] I want to view (browse through) all user records.
@@ -12,8 +23,6 @@ As a user running the application:
 8. [DONE] I want to delete a collection.
 9. [DONE] I want to sort user records by name, whether in a filter or a collection or not.
 
-# STYLING
-
 1. [DONE] Layout of app
 2. [DONE] Header component including search and filter functionality
 3. [DONE] Collections manager
@@ -23,20 +32,7 @@ As a user running the application:
 7. [DONE] Fix edit user text field
 8. [DONE] Styling for pagination
 
-# ISSUES
-
-1. Search: not working correctly if searching by e.g. 'user 1'
-2. Clicking somewhere on the user field causes focus, not correctly focusing out afterwards
-3. When refreshing, all data is lost, add a check when page is refreshed
-
 # EXTRAS
 
 1.[DONE]  Display total records
 2. Add Collection feature on collection manager (?)
-
-# LAST
-
-1. Move out all components, scripts and styling
-2. Complete all TODOs
-3. Optimise functions
-4. Ensure there are sufficient comments
