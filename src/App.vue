@@ -559,8 +559,6 @@
                     if (result === undefined) {
                         this.collections[collectionIndex].records.push(selectedRecord);
                         this.closeCollectionDrawer();
-                    } else {
-                        alert('Item already exists in collection.');
                     }
                 });
             },
