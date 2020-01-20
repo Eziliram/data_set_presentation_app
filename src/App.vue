@@ -1,5 +1,6 @@
 <template>
     <div id="app">
+        <!--<editor-fold desc="Collections Manager">-->
         <div id="collections_container">
             <div id="collections_manager-title">Collections Manager</div>
 
@@ -10,18 +11,26 @@
                      @mouseover="setCurrentCollectionFocus(index)"
                      @mouseleave="currentCollectionFocus = null">
                     <div @click="viewCollection(collection)">{{ collection.name }}</div>
+
                     <div>
-                        <img v-if="currentCollectionFocus === index" class="delete" src="./assets/images/delete.svg" @click="deleteCollection(collection)" alt="Delete"/>
+                        <img v-if="currentCollectionFocus === index"
+                             class="delete"
+                             src="./assets/images/delete.svg"
+                             @click="deleteCollection(collection)"
+                             alt="Delete"/>
                     </div>
                 </div>
 
                 <p v-if="collections.length === 0">You have no collections.</p>
             </div>
         </div>
+        <!--</editor-fold>-->
 
+        <!--<editor-fold desc="Dashboard">-->
         <div id="dashboard">
+            <!--<editor-fold desc="Search & Filter Container">-->
             <div id="query_container">
-                <img id="refresh" src="./assets/images/refresh.svg" @click="reset()" alt="Reset"/>
+                <img id="reset" src="./assets/images/reset.svg" @click="reset()" alt="Reset"/>
 
                 <div id="search_container">
                     <label>
@@ -30,7 +39,6 @@
 
                     <div class="btn-container">
                         <div id="btn_search" class="btn primary" @click="search()">Search</div>
-<!--                        <div id="btn_clear" class="btn secondary" @click="clearSearch()">Clear</div>todo:should this be removed?-->
                     </div>
                 </div>
 
@@ -46,20 +54,21 @@
 
                     <div class="btn-container">
                         <div id="btn_apply_filter" class="btn primary" @click="applyFilter()">Apply</div>
-<!--                        <div id="btn_remove_filter" class="btn secondary" @click="clearFilter()">Clear</div>todo:should this be removed?-->
                     </div>
                 </div>
             </div>
+            <!--</editor-fold>-->
 
+            <!--<editor-fold desc="Table">-->
             <div id="table_container">
                 <div id="table_title">
                     {{ tableTitle === null
-                    ? 'All user records'
-                    : isCollection
-                        ? 'Collection: ' + tableTitle
-                        : isResult
-                            ? 'Results containing: \'' + tableTitle + '\''
-                            : 'other' }}
+                        ? 'All user records'
+                        : isCollection
+                            ? 'Collection: ' + tableTitle
+                            : isResult
+                                ? 'Results containing: \'' + tableTitle + '\''
+                                : '' }}
                 </div>
 
                 <div id="table_header" class="data-row">
@@ -73,12 +82,13 @@
 
                     <div class="data-row-user">
                         <div>NAME</div>
-                        <img id="sort" :src="sortIcon" @click="sort()" alt="Sort">
+                        <img id="sort" :src="iconSort" @click="sort()" alt="Sort">
                     </div>
 
                     <div>ATTRIBUTES</div>
                 </div>
 
+                <!--<editor-fold desc="Table Rows">-->
                 <div id="data_container" :class="{ 'show-collection-drawer': selectedRecords.length !== 0 }">
                     <div v-if="index < numberOfRecordsPerPage"
                          v-for="(user, index) in displayedRecords"
@@ -95,7 +105,7 @@
 
                         <div>{{ user.id }}</div>
 
-                        <div @mousedown="editUser(index)" @mouseup="setFocusForUserEdit(index)">
+                        <div @mousedown="editUser(index)" @mouseup="focusEditUser(index)">
                             <span v-show="selectedUserIndex !== index">{{ user.name }}</span>
 
                             <label>
@@ -115,17 +125,21 @@
 
                     <p v-if="displayedRecords.length === 0">No records found.</p>
                 </div>
+                <!--</editor-fold>-->
             </div>
+            <!--</editor-fold>-->
 
-            <div class="pagination">
+            <!--<editor-fold desc="Table Pagination">-->
+            <div id="pagination">
                 <span class="btn" @click="backToStart()">First</span>
                 <span class="btn" @click="previous()">Prev</span>
                 <span class="btn" @click="next()">Next</span>
                 <span class="btn" @click="goToEnd()">Last</span>
-
                 <span id="total_records">Total records: {{ totalRecords }}</span>
             </div>
+            <!--</editor-fold>-->
 
+            <!--<editor-fold desc="'Add New Or Add To Existing Collection' Component">-->
             <div id="add_modify_collection" v-if="selectedRecords.length !== 0">
                 <div>
                     <template v-if="isNewCollection === null">
@@ -136,6 +150,7 @@
                         COLLECTION?
                     </template>
 
+                    <!--<editor-fold desc="Add New Collection">-->
                     <template v-if="isNewCollection">
                         <label>
                             <input id="txt_collection_name" type="text" placeholder="Collection name"/>
@@ -144,7 +159,9 @@
                         <span id="btn_create_new_collection" class="btn primary" @click="addToNewCollection()">Add</span>
                         <span class="btn secondary" @click="isNewCollection = null">Cancel</span>
                     </template>
+                    <!--</editor-fold>-->
 
+                    <!--<editor-fold desc="Add To Existing Collection">-->
                     <template v-if="isNewCollection !== null && !isNewCollection">
                         <template v-if="collections.length !== 0">
                             <label for="drp_collections">
@@ -163,9 +180,12 @@
                             <p>You have no saved collections.</p>
                         </template>
                     </template>
+                    <!--</editor-fold>-->
                 </div>
             </div>
+            <!--</editor-fold>-->
         </div>
+        <!--</editor-fold>-->
     </div>
 </template>
 
@@ -225,7 +245,7 @@
 
                 return records.slice(this.currentPage, this.currentPage + this.numberOfRecordsPerPage);
             },
-            sortIcon() {
+            iconSort() {
                 return this.ascending ? require('./assets/images/up.svg') : require('./assets/images/down.svg');
             }
         },
@@ -234,7 +254,7 @@
             editUser(index) {
                 this.selectedUserIndex = index;
             },
-            setFocusForUserEdit(index) {
+            focusEditUser(index) {
                 document.getElementById('txt_' + index).focus();
             },
             setCurrentCollectionFocus(index) {
@@ -563,248 +583,4 @@
     }
 </script>
 
-<style lang="stylus">
-    primary = #4171A0
-    secondary = #EFEFEF
-    default = #2C3E50
-
-    body
-        margin 0
-
-    #app
-        font-family 'Roboto', sans-serif
-        color default
-        display flex
-        flex-direction row
-        #collections_container
-            border-right 2px solid default
-            width 20%
-            max-height 100%
-            #collections_manager-title
-                background-color default
-                color #FFF
-                font-size 15px
-                font-weight 500
-                text-transform uppercase
-                text-align center
-                line-height 71px
-                letter-spacing 1.5px
-                height 74px
-            #collections
-                height calc(100vh - 75px)
-                overflow auto
-                font-size 17px
-                .collection
-                    display flex
-                    flex-direction row
-                    padding 0 5px 0 15px
-                    &:first-child
-                        margin-top 17px
-                    &:last-child
-                        margin-bottom 17px
-                    &:hover
-                        background-color #F4F6F7
-                    .delete
-                        height 20px
-                        padding-top 5px
-                        &:hover
-                            cursor pointer
-                    div
-                        height 30px
-                        line-height 30px
-                        cursor pointer
-                        &:first-child
-                            width 90%
-                        &:nth-child
-                            width 10%
-                .selected-collection
-                    color primary
-                    font-weight 600
-                p
-                    padding-left 10px
-        #dashboard
-            width 80%
-            #query_container
-                position fixed
-                width 100%
-                height 58px
-                padding-bottom 15px
-                display flex
-                flex-direction row
-                border-bottom 1px solid #CCC
-                box-shadow 0 1px 5px #CCC
-                #refresh
-                    cursor pointer
-                    border 2px solid transparent
-                    height 24px
-                    margin auto 10px 0
-                    padding 1px
-                    &:hover
-                        background-color #F4F6F7
-                        border-radius 25px
-                #search_container
-                    margin-right 20px
-                #search_container
-                #filter_container
-                    height 50px
-                    display flex
-                    flex-direction row
-                    label
-                        align-self flex-end
-                div
-                    align-self flex-end
-            #table_container
-                position relative
-                margin-top 71px
-                #table_title
-                    font-size 18px
-                    font-weight 500
-                    height 60px
-                    line-height 60px
-                    padding-left 10px
-                #table_header
-                    height 30px
-                    font-size 14px
-                    font-weight 500
-                    line-height 30px
-                    border-bottom 2px solid primary
-                    &:hover
-                        background-color transparent
-                        cursor initial
-                #data_container
-                    height calc(100vh - 202px)
-                    border-bottom 2px solid primary
-                    overflow-y scroll
-                    p
-                        padding-left 15px
-            #add_modify_collection
-                height 70px
-                font-size 14px
-                div
-                    text-align center
-                    padding-top 20px
-                    margin-top 10px
-
-    .data-row
-        font-size 14px
-        display flex
-        flex-direction row
-        padding 1px 0 4px 10px
-        .data-row-user
-            display flex
-            flex-direction row
-        .txt-data-row-user
-            width 100px
-            margin-left 0
-            &:hover
-                cursor text !important
-        &:first-child
-            margin-top 10px
-        &:last-child
-            margin-bottom 7px
-        &:hover
-            cursor pointer
-            background-color #F4F6F7
-        div
-            &:first-child
-                width 40px
-            &:nth-child(2) // ID
-                width 70px
-            &:nth-child(3) // User
-                width 150px
-            &:nth-child(4) // Attribute
-                width 1200px
-            .delete
-                height 16px
-                &:hover
-                    cursor pointer
-
-    .show-collection-drawer
-        height calc(100vh - 295px) !important
-
-    #sort
-        cursor pointer
-        height 27px
-        padding-left 10px
-
-    #drp_filter
-        option
-            &:first-child
-                color #D3D3D3
-
-    input[type=checkbox]
-        cursor pointer
-
-    input[type=text]
-    select
-        background-color transparent
-        cursor pointer
-        font-size 14px
-        border none
-        border-bottom 2px solid primary
-        width 250px
-        margin-left 10px
-        padding 10px 5px 5px 10px
-        &:focus
-            outline none !important
-
-
-    .btn-container
-        display flex
-        flex-direction row
-
-    .btn
-        background-color transparent
-        color primary
-        font-family 'Roboto'
-        font-size 14px
-        font-weight 600
-        text-transform uppercase
-        text-align center
-        cursor pointer
-        border 1px solid transparent
-        padding 7px 12px
-        margin-left 10px
-        height 15px
-        width 70px
-        user-select none
-
-    .primary
-        border 2px solid primary
-        &:hover
-            background-color primary
-            color #FFF
-
-    .secondary
-        color default
-        width 50px
-        height 16px
-        &:hover
-            color #090C0F
-
-    .pagination
-        height 30px
-        line-height 30px
-        text-align center
-        border-bottom 2px solid primary
-        span
-            height 20px !important
-            padding-left 20px !important
-            padding-right 20px !important
-            margin-left 0 !important
-            border-right 2px solid primary
-            &:first-child
-                border-left 2px solid primary
-            &:hover
-                background-color primary
-                color #FFF
-        #total_records
-            color primary
-            border none !important
-            &:hover
-                background-color transparent
-                color primary
-
-    .mr-5
-        margin-right 5px
-</style>
+<style src="./assets/css/app.styl" lang="stylus"/>

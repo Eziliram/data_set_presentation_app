@@ -30,7 +30,7 @@ Note: I have not used any UI Frameworks such as Vuetify/Bootstrap in order to sh
 - Researched and implemented the functionality of the drafted components
 - Defined the final layout design on paper
 - Styled components according to the final design
-- Ran through user test cases and fixed bugs
+- Ran through user cases and fixed bugs
 - Documentation and optimisation
 - Published application on GitHub
 
@@ -100,6 +100,7 @@ TOTAL: [x] days
 - added an additional component to view the details of the Attributes, e.g. IDs and URLs
 - implemented a feature to hide/show the Collections Manager to allow for more space on the dashboard to view the records
 - persisted the state (if the page is refreshed, all data will be reset back to their defaults)
+- moved sections out to their own components
 
 ## References
 

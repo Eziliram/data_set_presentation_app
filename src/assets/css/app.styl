@@ -1,0 +1,243 @@
+primary = #4171A0
+secondary = #EFEFEF
+default = #2C3E50
+
+body
+  margin 0
+
+#app
+  font-family 'Roboto', sans-serif
+  color default
+  display flex
+  flex-direction row
+  #collections_container
+    width 20%
+    max-height 100%
+    border-right 2px solid default
+    #collections_manager-title
+      color #FFF
+      background-color default
+      font-size 15px
+      font-weight 500
+      text-transform uppercase
+      text-align center
+      letter-spacing 1.5px
+      line-height 71px
+      height 74px
+    #collections
+      height calc(100vh - 75px)
+      font-size 17px
+      overflow auto
+      .collection
+        display flex
+        flex-direction row
+        padding 0 5px 0 15px
+        &:first-child
+          margin-top 17px
+        &:last-child
+          margin-bottom 17px
+        &:hover
+          background-color #F4F6F7
+        .delete
+          height 20px
+          padding-top 5px
+          &:hover
+            cursor pointer
+        div
+          height 30px
+          line-height 30px
+          cursor pointer
+          &:first-child
+            width 90%
+          &:nth-child
+            width 10%
+      .selected-collection
+        color primary
+        font-weight 600
+      p
+        padding-left 10px
+  #dashboard
+    width 80%
+    #query_container
+      position fixed
+      width 100%
+      height 58px
+      padding-bottom 15px
+      display flex
+      flex-direction row
+      border-bottom 1px solid #CCC
+      box-shadow 0 1px 5px #CCC
+      #reset
+        cursor pointer
+        border 2px solid transparent
+        height 24px
+        padding 1px
+        margin auto 10px 0
+        &:hover
+          background-color #F4F6F7
+          border-radius 25px
+      #search_container
+        margin-right 20px
+      #search_container
+      #filter_container
+        height 50px
+        display flex
+        flex-direction row
+        label
+          align-self flex-end
+      div
+        align-self flex-end
+    #table_container
+      position relative
+      margin-top 71px
+      #table_title
+        font-size 18px
+        font-weight 500
+        height 60px
+        line-height 60px
+        padding-left 10px
+      #table_header
+        height 30px
+        font-size 14px
+        font-weight 500
+        line-height 30px
+        border-bottom 2px solid primary
+        &:hover
+          background-color transparent
+          cursor initial
+      #data_container
+        height calc(100vh - 202px)
+        border-bottom 2px solid primary
+        overflow-y scroll
+        p
+          padding-left 15px
+    #add_modify_collection
+      height 70px
+      font-size 14px
+      div
+        text-align center
+        padding-top 20px
+        margin-top 10px
+
+.data-row
+  font-size 14px
+  display flex
+  flex-direction row
+  padding 1px 0 4px 10px
+  .data-row-user
+    display flex
+    flex-direction row
+  .txt-data-row-user
+    width 100px
+    margin-left 0
+    &:hover
+      cursor text !important
+  &:first-child
+    margin-top 10px
+  &:last-child
+    margin-bottom 7px
+  &:hover
+    cursor pointer
+    background-color #F4F6F7
+  div
+    &:first-child
+      width 40px
+    &:nth-child(2) // ID
+      width 70px
+    &:nth-child(3) // User
+      width 150px
+    &:nth-child(4) // Attribute
+      width 1200px
+    .delete
+      height 16px
+      &:hover
+        cursor pointer
+
+.show-collection-drawer
+  height calc(100vh - 295px) !important
+
+#sort
+  cursor pointer
+  height 27px
+  padding-left 10px
+
+#drp_filter
+  option
+    &:first-child
+      color #D3D3D3
+
+input[type=checkbox]
+  cursor pointer
+
+input[type=text]
+select
+  background-color transparent
+  cursor pointer
+  font-size 14px
+  border none
+  border-bottom 2px solid primary
+  width 250px
+  margin-left 10px
+  padding 10px 5px 5px 10px
+  &:focus
+    outline none !important
+
+
+.btn-container
+  display flex
+  flex-direction row
+
+.btn
+  background-color transparent
+  color primary
+  font-family 'Roboto'
+  font-size 14px
+  font-weight 600
+  text-transform uppercase
+  text-align center
+  cursor pointer
+  border 1px solid transparent
+  padding 7px 12px
+  margin-left 10px
+  height 15px
+  width 70px
+  user-select none
+
+.primary
+  border 2px solid primary
+  &:hover
+    background-color primary
+    color #FFF
+
+.secondary
+  color default
+  width 50px
+  height 16px
+  &:hover
+    color #090C0F
+
+#pagination
+  height 30px
+  line-height 30px
+  text-align center
+  border-bottom 2px solid primary
+  span
+    height 20px !important
+    padding-left 20px !important
+    padding-right 20px !important
+    margin-left 0 !important
+    border-right 2px solid primary
+    &:first-child
+      border-left 2px solid primary
+    &:hover
+      background-color primary
+      color #FFF
+  #total_records
+    color primary
+    border none !important
+    &:hover
+      background-color transparent
+      color primary
+
+.mr-5
+  margin-right 5px

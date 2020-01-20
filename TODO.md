@@ -4,7 +4,7 @@
 2. Complete all TODOs
 3. Optimise functions
 4. Ensure there are sufficient comments
-5. Set up some test cases
+5. [N/A] Set up some test cases
 
 
 As a user running the application:
