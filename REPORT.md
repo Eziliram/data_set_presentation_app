@@ -103,7 +103,7 @@ TOTAL: 4 days
 - moved sections out to their own components
 - improved pagination buttons to display number of pages and current displayed page
 
-## Recources & References
+## Resources & References
 
 - Yarn package manager: https://yarnpkg.com/en/docs
 - JavaScript Framework: https://vuejs.org/v2/api/
