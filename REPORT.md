@@ -96,12 +96,13 @@ TOTAL: 4 days
 
 ## If I had more time, I would have:
 
+- added a drop-down to specify the 'Search By' value (currently it is searching values by both name and attribute) 
 - implemented field validations and error messages
 - added an additional component to view the details of the Attributes, e.g. IDs and URLs
 - implemented a feature to hide/show the Collections Manager to allow for more space on the dashboard to view the records
 - persisted the state (if the page is refreshed, all data will be reset back to their defaults)
 - moved sections out to their own components
-- disabled pagination buttons according to the state of the current list
+- improved pagination buttons to display number of pages and current displayed page
 
 ## References
 
