@@ -19,7 +19,7 @@ at all times for quick access to this functionality.
 Collections are grouped in the Collections Manager sidebar component to allow for quick access to view, modify and/or delete collections. 
 
 To avoid cluttering in the Collections Manager component, the component to save to a new/existing collection will
-only become available after the user has selected at lease one user record.
+only become available after the user has selected at least one user record.
 
 Note: I have not used any UI Frameworks such as Vuetify/Bootstrap in order to showcase my CSS skills.
 
@@ -32,7 +32,6 @@ Note: I have not used any UI Frameworks such as Vuetify/Bootstrap in order to sh
 - Styled components according to the final design
 - Ran through user cases and fixed bugs
 - Documentation and optimisation
-- Published application on GitHub
 
 ## Problems Or Obstacles Encountered
 
