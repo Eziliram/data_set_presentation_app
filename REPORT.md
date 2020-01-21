@@ -103,14 +103,14 @@ TOTAL: 4 days
 - moved sections out to their own components
 - improved pagination buttons to display number of pages and current displayed page
 
-## References
+## Recources & References
 
-- https://yarnpkg.com/en/docs
-- https://vuejs.org/v2/api/
-- https://cli.vuejs.org/
-- https://developer.mozilla.org/en-US/docs/Web/JavaScript
-- https://api.jquery.com/
-- http://stylus-lang.com/
-- https://css-tricks.com/snippets/css/a-guide-to-flexbox/
-- https://material.io/resources/icons/?style=baseline
-- https://fonts.google.com/
+- Yarn package manager: https://yarnpkg.com/en/docs
+- JavaScript Framework: https://vuejs.org/v2/api/
+- JavaScript: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+- CLI: https://cli.vuejs.org/
+- jQuery: https://api.jquery.com/
+- CSS Preprocessor: http://stylus-lang.com/
+- CSS Flexbox reference: https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+- Icons: https://material.io/resources/icons/?style=baseline
+- Font reference: https://fonts.google.com/
